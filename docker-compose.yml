@@ -1,0 +1,26 @@
+version: '3'
+services:
+  application:
+    build:
+      context: ./application
+      dockerfile: Dockerfile
+    volumes:
+      - './application:/app'
+    ports:
+      - 5000:5000
+    environment:
+      - FLASK_APP=app_logic
+      - FLASK_ENV=development
+      - APP_CONFIG_FILE=config/development.cfg
+  authentication:
+    build:
+      context: ./authentication
+      dockerfile: Dockerfile
+    volumes:
+      - './authentication:/app'
+    ports:
+      - 5001:5001
+    environment:
+      - FLASK_APP=auth
+      - FLASK_ENV=development
+      - APP_CONFIG_FILE=config/development.cfg
