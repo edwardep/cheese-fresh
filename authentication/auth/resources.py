@@ -88,3 +88,17 @@ def Validation(item):
         if v.required and item[k] == "":
             return False
     return output
+
+
+# @app.after_request
+# def after_request(response):
+#     response.headers.add('Access-Control-Allow-Credentials', 'true')
+#     response.headers[
+#         'Access-Control-Allow-Methods'] = 'DELETE, GET, POST, PUT, OPTIONS'
+#     response.headers[
+#         'Access-Control-Allow-Headers'] = 'Access-Control-Allow-Origin'  # , Set-Cookie, Cookie'
+#     response.headers[
+#         'Access-Control-Expose-Headers'] = 'Authorization, Headers, error'
+#     response.headers['Content-Type'] = 'application/json'
+
+#     return response

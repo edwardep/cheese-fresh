@@ -13,9 +13,9 @@ test_build: clear_cache
 	docker-compose -f docker-compose.test.yml build
 
 test_up:
-	docker-compose -f docker-compose.test.yml up -d
-	docker logs --tail 1000 cheese-fresh_application_1 -f
-	docker logs --tail 1000 cheese-fresh_authentication_1 -f
+	docker-compose -f docker-compose.test.yml up
+	#docker logs --tail 100 app_test -f
+	#docker logs --tail 10 auth_test -f
 
 help:
 	@echo test_up 	: docker-compose-test up
