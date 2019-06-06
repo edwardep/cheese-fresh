@@ -12,6 +12,8 @@ services:
       - FLASK_APP=app_logic
       - FLASK_ENV=development
       - APP_CONFIG_FILE=config/development.cfg
+    depends_on: 
+      - mongodb
   authentication:
     build:
       context: ./authentication
@@ -24,3 +26,12 @@ services:
       - FLASK_APP=auth
       - FLASK_ENV=development
       - APP_CONFIG_FILE=config/development.cfg
+    depends_on: 
+      - mongodb
+  mongodb:
+    image: 'mongo:latest'
+    environment:
+      - MONGO_DATA_DIR=/data/db
+    volumes:
+      - ./data/db:/data/db
+    command: mongod --smallfiles #--quiet
