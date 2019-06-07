@@ -6,6 +6,8 @@ from .data.users import User
 from .data.galleries import Gallery
 from .data.images import Image
 import uuid
+import requests
+from . import STORAGE_HOST
 
 
 class index(Resource):
@@ -152,8 +154,12 @@ class AddImage(Resource):
             'description': image.description,
             'comments': image.comments
         }
-        # sendFile = {"file": (filename, file.stream, file.mimetype)}
+        sendFile = {"file": (filename, file.stream, file.mimetype)}
 
+        try:
+            requests.post(STORAGE_HOST + '/post_image', files=sendFile)
+        except:
+            return make_response(jsonify('storage_error'), 500)
         # requests.post(zk_get_addr(storage_servers[0]) + '/post_image',
         #               files=sendFile)
         # time.sleep(1)

@@ -14,8 +14,10 @@ test_build: clear_cache
 
 test_up:
 	docker-compose -f docker-compose.test.yml up
+	#docker-compose -f docker-compose.test.yml run test_app python -m pytest -p no:cacheprovider
 	#docker logs --tail 100 app_test -f
 	#docker logs --tail 10 auth_test -f
+	#docker exec -it cheese-fresh_mongodb_1 mongod --shutdown
 
 help:
 	@echo test_up 	: docker-compose-test up

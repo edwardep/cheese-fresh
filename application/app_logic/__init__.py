@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 app.config.from_envvar('APP_CONFIG_FILE')
 app.config['MONGODB_HOST'] = environ.get('MONGODB_HOST')
-
+STORAGE_HOST = environ.get('STORAGE_HOST')
 db = MongoEngine(app)
 jwt = JWTManager(app)
 

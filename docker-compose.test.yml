@@ -11,9 +11,11 @@ services:
     environment:
       - FLASK_ENV=development
       - MONGODB_HOST=mongodb
+      - STORAGE_HOST=http://storage_server:1000
       - APP_CONFIG_FILE=config/testing.cfg
     depends_on: 
       - mongodb
+      - storage_server
   authentication:
     container_name: auth_test
     build:
@@ -28,6 +30,21 @@ services:
       - APP_CONFIG_FILE=config/testing.cfg
     depends_on: 
       - mongodb
+    logging:
+      driver: none
+  storage_server:
+    build:
+      context: ./storage
+      dockerfile: Dockerfile
+    volumes:
+      - './storage:/app'
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=server
+      - STORAGE_PORT=1000
+      - APP_CONFIG_FILE=config/development.cfg
+    ports:
+      - 1000:1000
   mongodb:
     image: 'mongo:latest'
     environment:
