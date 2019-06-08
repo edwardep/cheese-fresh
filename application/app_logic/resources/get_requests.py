@@ -8,7 +8,6 @@ from ..data.images import Image
 from ..data.follow_obj import FollowObj
 import uuid
 import requests
-from .. import STORAGE_HOST
 import string
 import random
 
