@@ -16,7 +16,14 @@ def test_post_follow_not_found(client, utility):
 
 @pytest.mark.xfail
 def test_post_gallery_success(client, utility):
-    pass
+    utility.mock_user('user')
+
+    url = '/add_gallery'
+    data = {'gallery_title': 'gallery'}
+    response = client.post(url, data, headers=utility.mock_token())
+
+    assert response.status_code == 201
+
 
 def test_post_image_success(client, utility):
     utility.mock_user('user')
