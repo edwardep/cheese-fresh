@@ -1,8 +1,10 @@
 from app_logic import app
 from app_logic.data.users import User
 from app_logic.data.galleries import Gallery
+from app_logic.data.images import Image
 import pytest
 from mongoengine import connect
+from flask_jwt_extended import create_access_token
 
 
 @pytest.fixture
@@ -24,6 +26,8 @@ class Utility:
     @staticmethod
     def mock_token():
         # identity = user
+        # username = 'user'
+        # token = create_access_token(identity=username)
         token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTk4MTY1OTEsIm5iZiI6MTU1OTgxNjU5MSwianRpIjoiNDdlOWI5YTMtODEwNC00MDNjLTg0MjgtMTQyZTVmOGMwNDkxIiwiZXhwIjoxNTYwODE2NTkxLCJpZGVudGl0eSI6InVzZXIiLCJmcmVzaCI6ZmFsc2UsInR5cGUiOiJhY2Nlc3MifQ.7BBLbo3-1nUGNn-oEsHRPNbZHpRmmgN5pRJvFAaaI6s'
         return [('Authorization', 'Bearer ' + token)]
 
@@ -43,3 +47,26 @@ class Utility:
         gallery.owner = user.username
         user.galleries.insert(0, gallery)
         user.save()
+
+    @staticmethod
+    def mock_follow(user1, user2):
+        me = User.objects(username=user1).first()
+        friend = User.objects(username=user2).first()
+        friend.followers.append(user1)
+        friend.save()
+        me.following.append(user2)
+        me.save()
+
+    @staticmethod
+    def mock_add_image(owner, filename):
+        image = Image()
+        image.path = '/uploads/'+filename
+        image.owner = owner
+        image.save()
+        image.iid = str(image.id)
+        image.save()
+        me = User.objects(username=owner).first()
+        emb_gallery = me.galleries[0]
+        emb_gallery.images.insert(0, image.iid)
+        me.save()
+        return image.iid

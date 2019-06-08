@@ -2,12 +2,6 @@ def test_index(client):
     response = client.get('/')
     assert response.status_code == 200
 
-
-def test_register(client, utility):
-    response = utility.register_user(client, 'user', 'pass')
-    assert response.status_code == 201
-
-
 def test_user_register_success(client, utility):
     response = utility.register_user(client, 'user', 'pass')
     assert response.status_code == 201
