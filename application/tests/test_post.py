@@ -2,36 +2,59 @@ from io import BytesIO
 import pytest
 import os
 
-@pytest.mark.xfail
-def test_post_follow_success(client, utility):
-    pass
 
-@pytest.mark.xfail
+def test_post_follow_success(client, utility):
+    utility.mock_user('user')
+    utility.mock_user('john')
+
+    # attempt to follow john & succeed
+    url = '/follow'
+    data = {'username': 'john'}
+    response = client.post(url, json=data, headers=utility.mock_token())
+
+    assert response.status_code == 201
+
+
 def test_post_follow_unacceptable(client, utility):
-    pass
+    utility.mock_user('user')
+
+    # attempt to follow himself & fail
+    url = '/follow'
+    data = {'username': 'user'}
+    response = client.post(url, json=data, headers=utility.mock_token())
+
+    assert response.status_code == 406
 
 @pytest.mark.xfail
 def test_post_follow_not_found(client, utility):
-    pass
+    utility.mock_user('user')
 
-@pytest.mark.xfail
+    # attempt to follow non-existing user & fail
+    url = '/follow'
+    data = {'username': 'user2312321'}
+    response = client.post(url, json=data, headers=utility.mock_token())
+
+    assert response.status_code == 404
+
+
 def test_post_gallery_success(client, utility):
     utility.mock_user('user')
 
     url = '/add_gallery'
     data = {'gallery_title': 'gallery'}
-    response = client.post(url, data, headers=utility.mock_token())
+    response = client.post(url, json=data, headers=utility.mock_token())
 
     assert response.status_code == 201
 
 
 def test_post_image_success(client, utility):
     utility.mock_user('user')
-    utility.mock_gallery('gallery')
+    utility.mock_gallery('user', 'gallery')
 
+    url = '/add_image?gallery_title=gallery'
     data = {'file': (BytesIO(b'IMAGE DATA'), 'tokio.jpg')}
 
-    response = client.post('/add_image?gallery_title=gallery', buffered=True,
+    response = client.post(url, buffered=True,
                            content_type='multipart/form-data',
                            data=data, headers=utility.mock_token())
     assert response.status_code == 201
@@ -41,7 +64,8 @@ def test_post_image_gallery_not_found(client, utility):
     utility.mock_user('user')
     # Gallery is missing
 
-    response = client.post('/add_image?gallery_title=', buffered=True,
+    url = '/add_image?gallery_title='
+    response = client.post(url, buffered=True,
                            content_type='multipart/form-data',
                            data={}, headers=utility.mock_token())
     assert response.status_code == 404
@@ -49,10 +73,11 @@ def test_post_image_gallery_not_found(client, utility):
 
 def test_post_image_bad_type(client, utility):
     utility.mock_user('user')
-    utility.mock_gallery('gallery')
+    utility.mock_gallery('user', 'gallery')
 
+    url = '/add_image?gallery_title=gallery'
     data = {'txt': (BytesIO(b'IMAGE DATA'), 'tokio.jpg')}
-    response = client.post('/add_image?gallery_title=gallery', buffered=True,
+    response = client.post(url, buffered=True,
                            content_type='multipart/form-data',
                            data=data, headers=utility.mock_token())
     assert response.status_code == 400
@@ -60,10 +85,11 @@ def test_post_image_bad_type(client, utility):
 
 def test_post_image_bad_filename(client, utility):
     utility.mock_user('user')
-    utility.mock_gallery('gallery')
+    utility.mock_gallery('user', 'gallery')
 
+    url = '/add_image?gallery_title=gallery'
     data = {'file': ''}
-    response = client.post('/add_image?gallery_title=gallery', buffered=True,
+    response = client.post(url, buffered=True,
                            content_type='multipart/form-data',
                            data=data, headers=utility.mock_token())
     assert response.status_code == 400
@@ -71,22 +97,49 @@ def test_post_image_bad_filename(client, utility):
 
 def test_post_image_bad_extension(client, utility):
     utility.mock_user('user')
-    utility.mock_gallery('gallery')
+    utility.mock_gallery('user', 'gallery')
 
+    url = '/add_image?gallery_title=gallery'
     data = {'file': (BytesIO(b'IMAGE DATA'), 'tokio.pdf')}
-    response = client.post('/add_image?gallery_title=gallery', buffered=True,
+    response = client.post(url, buffered=True,
                            content_type='multipart/form-data',
                            data=data, headers=utility.mock_token())
     assert response.status_code == 400
 
-@pytest.mark.xfail
+
 def test_post_comment_success(client, utility):
-    pass
+    utility.mock_user('user')
+    utility.mock_gallery('user', 'gallery')
+    iid = utility.mock_add_image('user', 'car.jpg')
 
-@pytest.mark.xfail
+    url = '/comment'
+    data = {'image_id': iid, 'text': 'awesome comment!'}
+    response = client.post(url, json=data, headers=utility.mock_token())
+
+    assert response.status_code == 201
+
+
 def test_post_comment_not_found(client, utility):
-    pass
+    utility.mock_user('user')
+    utility.mock_gallery('user', 'gallery')
 
-@pytest.mark.xfail
+    # attempt to comment on a photo with invalid id
+    url = '/comment'
+    data = {'image_id': '', 'text': 'awesome comment!'}
+    response = client.post(url, json=data, headers=utility.mock_token())
+
+    assert response.status_code == 404
+
+
 def test_post_comment_forbidden(client, utility):
-    pass
+    utility.mock_user('user')
+    utility.mock_user('john')
+    utility.mock_gallery('john', 'gallery')
+    iid = utility.mock_add_image('john', 'car.jpg')
+
+    # attempt to comment on john's photo, but haven't followed him
+    url = '/comment'
+    data = {'image_id': iid, 'text': 'awesome comment!'}
+    response = client.post(url, json=data, headers=utility.mock_token())
+
+    assert response.status_code == 403

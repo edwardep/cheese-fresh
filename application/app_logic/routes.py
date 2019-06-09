@@ -20,9 +20,9 @@ api.add_resource(get_requests.GetComments, '/get_comments')
 
 # # ----------------------POST---------------------------------------
 # api.add_resource(post_requests.AddProfilePicture, '/profile_picture')
-# api.add_resource(post_requests.Follow, '/follow')
+api.add_resource(post_requests.Follow, '/follow')
 api.add_resource(post_requests.AddGallery, '/add_gallery')
-# api.add_resource(post_requests.AddComment, '/comment')
+api.add_resource(post_requests.AddComment, '/comment')
 api.add_resource(post_requests.AddImage, '/add_image')
 
 

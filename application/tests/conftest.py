@@ -40,8 +40,8 @@ class Utility:
         user.save()
 
     @staticmethod
-    def mock_gallery(title):
-        user = User.objects(username='user').first()
+    def mock_gallery(username, title):
+        user = User.objects(username=username).first()
         gallery = Gallery()
         gallery.title = title
         gallery.owner = user.username
