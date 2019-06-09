@@ -1,4 +1,3 @@
-
 from flask_restful import Resource
 from flask import jsonify, request, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -171,7 +170,7 @@ class AddComment(Resource):
         user = User.objects(username=current_user).first()
         if image.owner not in user.following and current_user != image.owner:
             output = "Not allowed!"
-            return make_response(jsonify(output),403)
+            return make_response(jsonify(output), 403)
 
         comment.owner = current_user
         comment.text = text

@@ -2,6 +2,7 @@ from app_logic import app
 from app_logic.data.users import User
 from app_logic.data.galleries import Gallery
 from app_logic.data.images import Image
+from app_logic.data.comments import Comment
 import pytest
 from mongoengine import connect
 from flask_jwt_extended import create_access_token
@@ -20,6 +21,10 @@ def client():
 @pytest.fixture
 def utility():
     return Utility
+
+@pytest.fixture
+def mock_add_comment():
+    return Utility.mock_add_comment
 
 
 class Utility:
@@ -70,3 +75,15 @@ class Utility:
         emb_gallery.images.insert(0, image.iid)
         me.save()
         return image.iid
+
+    @staticmethod
+    def mock_add_comment(owner, iid, text):
+        me = User.objects(username=owner).first()
+        comment = Comment()
+        comment.owner = owner
+        comment.text = text
+        comment._id = 'super_unique_id'
+        image = Image.objects(iid=iid).first()
+        image.comments.append(comment)
+        image.save()
+        return comment._id

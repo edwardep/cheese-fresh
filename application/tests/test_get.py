@@ -1,6 +1,6 @@
 import pytest
 
-@pytest.mark.xfail
+
 def test_get_profile_success(client, utility):
     # create 2 users
     utility.mock_user('user')
@@ -77,7 +77,7 @@ def test_get_comments_success(client, utility):
 
     assert response.status_code == 200
 
-@pytest.mark.xfail
+
 def test_get_comments_forbidden(client, utility):
     utility.mock_user('user')
     utility.mock_gallery('user', 'gallery')
@@ -88,7 +88,7 @@ def test_get_comments_forbidden(client, utility):
 
     assert response.status_code == 403
 
-@pytest.mark.xfail
+
 def test_get_comments_not_found(client, utility):
     utility.mock_user('user')
     utility.mock_gallery('user', 'gallery')

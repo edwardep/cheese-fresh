@@ -5,7 +5,7 @@ services:
     build:
       context: ./application
       dockerfile: Dockerfile.test
-    command: 'python -m pytest -v -p no:cacheprovider -p no:warnings'
+    command: 'python -m pytest -v -p no:cacheprovider -p no:warnings --color=yes'
     volumes:
       - './application:/app'
     environment:
@@ -21,7 +21,7 @@ services:
     build:
       context: ./authentication
       dockerfile: Dockerfile.test
-    command: 'python -m pytest -v -p no:cacheprovider'
+    command: 'python -m pytest -v -p no:cacheprovider -p no:warnings --color=yes'
     volumes:
       - './authentication:/app'
     environment:
@@ -45,6 +45,8 @@ services:
       - APP_CONFIG_FILE=config/development.cfg
     ports:
       - 1000:1000
+    logging:
+      driver: none
   mongodb:
     image: 'mongo:latest'
     environment:

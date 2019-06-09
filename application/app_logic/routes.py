@@ -27,8 +27,7 @@ api.add_resource(post_requests.AddImage, '/add_image')
 
 
 # # ----------------------DELETE---------------------------------------
-# api.add_resource(delete_requests.DeleteImage, '/delete_image')
-# api.add_resource(delete_requests.DeleteGallery, '/delete_gallery')
-# api.add_resource(delete_requests.DeleteComment, '/delete_comment')
-# api.add_resource(delete_requests.DeleteFollower, '/delete_follower')
-
+api.add_resource(delete_requests.DeleteImage, '/delete_image')
+api.add_resource(delete_requests.DeleteGallery, '/delete_gallery')
+api.add_resource(delete_requests.DeleteComment, '/delete_comment')
+api.add_resource(delete_requests.DeleteFollower, '/delete_follower')
