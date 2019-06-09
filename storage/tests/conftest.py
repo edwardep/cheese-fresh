@@ -1,18 +1,14 @@
-# from app_logic import app
+from server import app
 # from app_logic.data.users import User
 # from app_logic.data.galleries import Gallery
-# import pytest
+import pytest
 # from mongoengine import connect
 
 
-# @pytest.fixture
-# def client():
-#     client = app.test_client()
-#     db = connect('cheese-test')
-#     db.drop_database('cheese-test')
-
-#     yield client
-#     db.drop_database('cheese-test')
+@pytest.fixture
+def client():
+    client = app.test_client()
+    yield client
 
 
 # @pytest.fixture

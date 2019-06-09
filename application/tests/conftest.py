@@ -7,6 +7,7 @@ import pytest
 from mongoengine import connect
 from flask_jwt_extended import create_access_token
 
+test_get = True
 
 @pytest.fixture
 def client():

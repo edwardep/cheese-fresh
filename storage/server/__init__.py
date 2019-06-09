@@ -1,7 +1,6 @@
 from flask import Flask, request, send_from_directory, jsonify, make_response
 from flask_cors import CORS
 from os import environ
-from flask_mongoengine import MongoEngine
 from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)

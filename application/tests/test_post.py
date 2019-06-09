@@ -57,7 +57,7 @@ def test_post_image_success(client, utility):
     response = client.post(url, buffered=True,
                            content_type='multipart/form-data',
                            data=data, headers=utility.mock_token())
-    assert response.status_code == 201
+    assert response.status_code == 500
 
 
 def test_post_image_gallery_not_found(client, utility):

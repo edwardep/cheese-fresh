@@ -5,7 +5,7 @@ services:
     build:
       context: ./application
       dockerfile: Dockerfile.test
-    command: 'python -m pytest -v -p no:cacheprovider -p no:warnings --color=yes'
+    command: 'python -m pytest -p no:cacheprovider -p no:warnings'
     volumes:
       - './application:/app'
     environment:
@@ -15,13 +15,12 @@ services:
       - APP_CONFIG_FILE=config/testing.cfg
     depends_on: 
       - mongodb
-      - storage_server
   authentication:
     container_name: auth_test
     build:
       context: ./authentication
       dockerfile: Dockerfile.test
-    command: 'python -m pytest -v -p no:cacheprovider -p no:warnings --color=yes'
+    command: 'python -m pytest -q -p no:cacheprovider -p no:warnings --color=yes'
     volumes:
       - './authentication:/app'
     environment:
@@ -30,24 +29,20 @@ services:
       - APP_CONFIG_FILE=config/testing.cfg
     depends_on: 
       - mongodb
-    logging:
-      driver: none
   storage_server:
+    container_name: storage_test
     build:
       context: ./storage
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.test
+    command: 'python -m pytest -p no:cacheprovider -p no:warnings --color=yes'
     volumes:
       - './storage:/app'
     environment:
       - FLASK_ENV=development
-      - FLASK_APP=server
       - STORAGE_PORT=1000
-      - APP_CONFIG_FILE=config/development.cfg
-    ports:
-      - 1000:1000
-    logging:
-      driver: none
+      - APP_CONFIG_FILE=config/testing.cfg
   mongodb:
+    container_name: mongo_test
     image: 'mongo:latest'
     environment:
       - MONGO_DATA_DIR=/data/db
