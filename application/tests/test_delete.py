@@ -58,7 +58,7 @@ def test_delete_comment_success(client, utility):
 
     assert response.status_code == 204
 
-@pytest.mark.xfail
+
 def test_delete_comment_not_found(client, utility):
     utility.mock_user('user')
 
@@ -67,7 +67,7 @@ def test_delete_comment_not_found(client, utility):
     data = {'comment_id': '', 'image_id': ''}
     response = client.delete(url, json=data, headers=utility.mock_token())
 
-    assert response.status_code == 403
+    assert response.status_code == 404
 
 def test_delete_follower_success(client, utility):
     utility.mock_user('user')

@@ -1,13 +1,13 @@
 from flask import Flask, request, send_from_directory, jsonify, make_response
 from flask_cors import CORS
-from os import environ
+import os
 from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 
 app.config.from_envvar('APP_CONFIG_FILE')
-app.config['STORAGE_PORT'] = environ.get('STORAGE_PORT')
-app.config['UPLOAD_FOLDER'] = "/app/media"+app.config['STORAGE_PORT']
+app.config['STORAGE_PORT'] = os.environ.get('STORAGE_PORT')
+app.config['UPLOAD_FOLDER'] = "/app/images"#+app.config['STORAGE_PORT']
 jwt = JWTManager(app)
 CORS(app)
 
@@ -20,8 +20,15 @@ def index():
 @app.route('/post_image', methods=['POST'])
 def post_image():
     file = request.files['file']
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-    return make_response(jsonify('OK'), 201)
+
+    assert os.path.exists(app.config['UPLOAD_FOLDER']) == True
+
+    try:
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        assert os.path.exists('/app/images/'+file.filename) == True
+        return make_response(jsonify('OK'), 201)
+    except:
+        return make_response(jsonify('failed'), 400)
 
 
 @app.route('/uploads/<filename>')

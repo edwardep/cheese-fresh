@@ -61,6 +61,8 @@ class Follow(Resource):
         current_user = get_jwt_identity()
         to_follow = request.json['username']
         friend = User.objects(username=to_follow).first()
+        if friend not in User.objects:
+            return make_response("BAD", 404)
         me = User.objects(username=current_user).first()
         # make sure its not me or its not already in my following list
         if to_follow in me.following or to_follow == current_user:
@@ -145,10 +147,10 @@ class AddImage(Resource):
         output = "OK"
         sendFile = {"file": (filename, file.stream, file.mimetype)}
 
-        try:
-            requests.post(STORAGE_HOST + '/post_image', files=sendFile)
-        except:
-            return make_response(jsonify('storage_error'), 500)
+        #try:
+        requests.post(STORAGE_HOST + '/post_image', files=sendFile)
+        #except:
+        #    return make_response(jsonify('storage_error'), 500)
 
         return make_response(jsonify(output), 201)
 

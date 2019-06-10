@@ -25,7 +25,7 @@ def test_post_follow_unacceptable(client, utility):
 
     assert response.status_code == 406
 
-@pytest.mark.xfail
+
 def test_post_follow_not_found(client, utility):
     utility.mock_user('user')
 
@@ -46,14 +46,14 @@ def test_post_gallery_success(client, utility):
 
     assert response.status_code == 201
 
-
 def test_post_image_success(client, utility):
     utility.mock_user('user')
     utility.mock_gallery('user', 'gallery')
 
     url = '/add_image?gallery_title=gallery'
-    data = {'file': (BytesIO(b'IMAGE DATA'), 'tokio.jpg')}
-
+    #data = {'file': (BytesIO(b'IMAGE DATA'), 'tokio.jpg')}
+    img_name = 'cheese.jpg'
+    data = {'file': open(img_name, 'rb')}
     response = client.post(url, buffered=True,
                            content_type='multipart/form-data',
                            data=data, headers=utility.mock_token())

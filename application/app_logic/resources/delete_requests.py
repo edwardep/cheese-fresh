@@ -63,8 +63,8 @@ class DeleteComment(Resource):
         comment_id = request.json['comment_id']
         image_id = request.json['image_id']
         image = Image.objects(iid=image_id).first()
-        if not current_user:
-            return make_response(jsonify('BAD'), 403)
+        if not comment_id or not image_id:
+            return make_response(jsonify('BAD'), 404)
         comment = image.comments.get(_id=comment_id)
         image.comments.remove(comment)
         image.save()

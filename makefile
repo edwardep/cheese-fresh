@@ -8,6 +8,9 @@ clear_cache:
 	sudo rm -rf authentication/.pytest_cache
 	sudo rm -rf authentication/auth/__pycache__
 	sudo rm -rf authentication/tests/__pycache__
+	sudo rm -rf storage/.pytest_cache
+	sudo rm -rf storage/server/__pycache__
+	sudo rm -rf storage/tests/__pycache__
 
 dev: clear_cache
 	docker-compose -f $(DEV_YML) up --build
@@ -17,9 +20,9 @@ test_build: clear_cache
 
 test_up:
 	@#docker-compose -f $(TEST_YML) up
-	docker-compose -f $(TEST_YML) run authentication
+	#docker-compose -f $(TEST_YML) run authentication
 	docker-compose -f $(TEST_YML) run application
-	docker-compose -f $(TEST_YML) run storage_server
+	#docker-compose -f $(TEST_YML) run storage_server
 	@#docker logs --tail 100 app_test -f
 	@#docker logs --tail 10 auth_test -f
 	@docker stop mongo_test
