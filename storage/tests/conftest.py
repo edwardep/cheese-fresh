@@ -2,13 +2,29 @@ from server import app
 # from app_logic.data.users import User
 # from app_logic.data.galleries import Gallery
 import pytest
+import os
 # from mongoengine import connect
-
+UPLOAD_DIR = '/app/images'
 
 @pytest.fixture
 def client():
     client = app.test_client()
+
+    #rm_files_from(UPLOAD_DIR)
     yield client
+    rm_files_from(UPLOAD_DIR)
+
+
+def rm_files_from(path):
+    try:
+        count = 0
+        filelist = [f for f in os.listdir(path)]
+        for f in filelist:
+            os.remove(os.path.join(path, f))
+            count = count + 1
+        print('files removed:', format(count))
+    except:
+        print('failed to rm files')
 
 
 @pytest.fixture

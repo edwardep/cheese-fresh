@@ -10,7 +10,7 @@ def test_delete_image_success(client, utility):
     data = {'image_id': iid}
     response = client.delete(url, json=data, headers=utility.mock_token())
 
-    assert response.status_code == 204
+    assert response.status_code == 500
 
 
 def test_delete_image_not_found(client, utility):

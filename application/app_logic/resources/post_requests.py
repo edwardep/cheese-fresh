@@ -136,7 +136,7 @@ class AddImage(Resource):
         filename = secure_filename(my_string[:idx] + '_' + uuid.uuid4().hex +
                                    my_string[idx:])
         image = Image()
-        image.path = '/uploads/' + filename
+        image.path = filename
         image.owner = current_user
         image.save()
         image.iid = str(image.id)
@@ -144,15 +144,17 @@ class AddImage(Resource):
         emb_gallery.images.insert(0, image.iid)
         me.save()
 
-        output = "OK"
+       # output = ""
         sendFile = {"file": (filename, file.stream, file.mimetype)}
 
-        #try:
-        requests.post(STORAGE_HOST + '/post_image', files=sendFile)
-        #except:
-        #    return make_response(jsonify('storage_error'), 500)
+        try:
+            output = requests.post(STORAGE_HOST + '/post_image', files=sendFile)
+            print(output.json())
+            return make_response(jsonify('OK'), 201)
+        except:
+            return make_response(jsonify({'path': 'storage_error'}), 500)
 
-        return make_response(jsonify(output), 201)
+        
 
 # Add comment to a specific photo ---> returns 404,403 or 201
 class AddComment(Resource):

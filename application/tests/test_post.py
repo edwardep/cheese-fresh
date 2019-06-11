@@ -51,12 +51,12 @@ def test_post_image_success(client, utility):
     utility.mock_gallery('user', 'gallery')
 
     url = '/add_image?gallery_title=gallery'
-    #data = {'file': (BytesIO(b'IMAGE DATA'), 'tokio.jpg')}
-    img_name = 'cheese.jpg'
-    data = {'file': open(img_name, 'rb')}
+    data = {'file': (BytesIO(b'IMAGE DATA'), 'tokio.jpg')}
+
     response = client.post(url, buffered=True,
                            content_type='multipart/form-data',
                            data=data, headers=utility.mock_token())
+
     assert response.status_code == 500
 
 

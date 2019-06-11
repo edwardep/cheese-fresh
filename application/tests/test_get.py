@@ -1,10 +1,5 @@
 import pytest
 
-TEST_GET = False
-skipif_not_get = pytest.mark.skipif(TEST_GET == False, reason="get requests skipped")
-
-
-@skipif_not_get
 def test_get_profile_success(client, utility):
     # create 2 users
     utility.mock_user('user')

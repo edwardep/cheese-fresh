@@ -1,7 +1,7 @@
 from flask import Flask, request, send_from_directory, jsonify, make_response
 from flask_cors import CORS
 import os
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required
 
 app = Flask(__name__)
 
@@ -18,19 +18,37 @@ def index():
 
 
 @app.route('/post_image', methods=['POST'])
+#@jwt_required
 def post_image():
     file = request.files['file']
-
     assert os.path.exists(app.config['UPLOAD_FOLDER']) == True
 
     try:
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-        assert os.path.exists('/app/images/'+file.filename) == True
-        return make_response(jsonify('OK'), 201)
+
+        path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(path)
+        assert os.path.exists(path) == True
+        return make_response(jsonify(path), 201)
     except:
         return make_response(jsonify('failed'), 400)
 
+@app.route('/delete_image', methods=['DELETE'])
+#@jwt_required
+def delete_image():
 
-@app.route('/uploads/<filename>')
+    filename = request.json['filename']
+
+    #assert os.path.exists(app.config['UPLOAD_FOLDER']) == True
+    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    #assert os.path.exists(path) == True
+    if os.path.exists(path):
+        os.remove(path)
+        return make_response(jsonify(path), 204)
+    else:
+        return make_response(jsonify(path), 400)
+
+
+
+@app.route('/<filename>')
 def get_uploads(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)

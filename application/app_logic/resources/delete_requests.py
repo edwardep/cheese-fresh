@@ -30,11 +30,20 @@ class DeleteImage(Resource):
             for image_id in gallery.images:
                 if image_id == this_image_id:
                     gallery.images.remove(image_id)
-        me.save()
+                    me.save()
+
+        # remove image Object and file from storage
         image = Image.objects(iid=this_image_id).first()
         if image:
-            image.delete()
-            return make_response(jsonify('OK'), 204)
+
+            data = {'filename': image.path}
+            try:
+                requests.delete(STORAGE_HOST + '/delete_image', json=data)
+                image.delete()
+                return make_response(jsonify('OK'), 204)
+            except:
+                return make_response(jsonify('storage_down'), 500)
+            
         return make_response(jsonify('BAD'), 404)
 
 
