@@ -2,14 +2,22 @@ from flask import Flask, request, send_from_directory, jsonify, make_response
 from flask_cors import CORS
 import os
 from flask_jwt_extended import JWTManager, jwt_required
-
+from kazoo.client import KazooClient 
 app = Flask(__name__)
 
 app.config.from_envvar('APP_CONFIG_FILE')
 app.config['STORAGE_PORT'] = os.environ.get('STORAGE_PORT')
 app.config['UPLOAD_FOLDER'] = "/app/images"#+app.config['STORAGE_PORT']
+app.config['ZK_HOST'] = os.environ.get('ZK_HOST')
 jwt = JWTManager(app)
 CORS(app)
+
+print(app.config['ZK_HOST'])
+
+client = KazooClient(hosts=app.config['ZK_HOST'])
+#client = KazooClient(hosts='localhost:2181')
+client.start()
+client.ensure_path("/storage")
 
 
 @app.route('/')
@@ -52,3 +60,5 @@ def delete_image():
 @app.route('/<filename>')
 def get_uploads(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+client.create('/storage/'+'1000',b"1000",ephemeral=True)

@@ -1,9 +1,13 @@
 from app_logic import app
+from kazoo.client import KazooClient
+from app_logic import zk_app
 from app_logic.data.users import User
 from app_logic.data.galleries import Gallery
 from app_logic.data.images import Image
 from app_logic.data.comments import Comment
 import pytest
+import os
+from app_logic import zk_get_storage_children
 from mongoengine import connect
 from flask_jwt_extended import create_access_token
 
@@ -18,6 +22,37 @@ def client():
     yield client
     db.drop_database('cheese-test')
 
+
+@pytest.fixture
+def get_zk_children():
+    get_zk_children = zk_get_storage_children()
+    yield get_zk_children
+
+@pytest.fixture
+def mock_zk_storage():
+    mock_zk_storage = KazooClient(hosts=os.environ.get('ZK_HOST'))
+    mock_zk_storage.start()
+    for i in range(10):
+        if not mock_zk_storage.exists('/storage/child'+str(i)):
+            mock_zk_storage.create('/storage/child'+str(i), b"1000")
+   # mock_zk_storage.create('/storage/child', b"1000")
+    yield mock_zk_storage
+    #mock_zk_storage.delete('/storage', recursive=True)  
+    mock_zk_storage.stop()
+
+@pytest.fixture
+def delete_zk_storage_children(mock_zk_storage):
+   
+    for i in range(3):
+        if mock_zk_storage.exists('/storage/child'+str(i)):
+            mock_zk_storage.delete('/storage/child'+str(i))
+    yield delete_zk_storage_children
+
+
+@pytest.fixture
+def real_zk_app():
+    real_zk_app = KazooClient(hosts=os.environ.get('ZK_HOST'))
+    yield real_zk_app
 
 @pytest.fixture
 def utility():

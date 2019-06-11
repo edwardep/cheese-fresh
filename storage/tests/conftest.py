@@ -1,15 +1,30 @@
 from server import app
+from server import client as real_client
+from kazoo.client import KazooClient
+import time 
 # from app_logic.data.users import User
 # from app_logic.data.galleries import Gallery
 import pytest
 import os
 # from mongoengine import connect
 UPLOAD_DIR = '/app/images'
+@pytest.fixture
+def zk_client():
+    zk_client = KazooClient(hosts=os.environ.get('ZK_HOST'))
+    zk_client.start()
+    real_client.stop()
+    #rm_files_from(UPLOAD_DIR)
+    yield zk_client
+
+@pytest.fixture
+def zk_storage():
+    zk_storage = real_client
+    yield zk_storage
+
 
 @pytest.fixture
 def client():
     client = app.test_client()
-
     #rm_files_from(UPLOAD_DIR)
     yield client
     rm_files_from(UPLOAD_DIR)
