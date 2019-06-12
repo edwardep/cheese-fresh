@@ -13,6 +13,15 @@ from flask_jwt_extended import create_access_token
 
 test_get = True
 
+from kazoo.testing import KazooTestCase
+
+class MyTest(KazooTestCase):
+    def testmycode(self):
+        self.client.ensure_path('/test/path')
+        result = self.client.get('/test/path')
+
+
+
 @pytest.fixture
 def client():
     client = app.test_client()
@@ -23,37 +32,25 @@ def client():
     db.drop_database('cheese-test')
 
 
-@pytest.fixture
-def get_zk_children():
-    get_zk_children = zk_get_storage_children()
-    yield get_zk_children
 
 @pytest.fixture
 def mock_zk_storage():
     mock_zk_storage = KazooClient(hosts=os.environ.get('ZK_HOST'))
     mock_zk_storage.start()
-    for i in range(10):
-        if not mock_zk_storage.exists('/storage/child'+str(i)):
-            mock_zk_storage.create('/storage/child'+str(i), b"1000")
-   # mock_zk_storage.create('/storage/child', b"1000")
+    mock_zk_storage.delete('/storage', recursive=True)  
     yield mock_zk_storage
-    #mock_zk_storage.delete('/storage', recursive=True)  
+    mock_zk_storage.delete('/storage', recursive=True)
     mock_zk_storage.stop()
 
-@pytest.fixture
-def delete_zk_storage_children(mock_zk_storage):
-   
-    for i in range(3):
-        if mock_zk_storage.exists('/storage/child'+str(i)):
-            mock_zk_storage.delete('/storage/child'+str(i))
-    yield delete_zk_storage_children
-
 
 @pytest.fixture
-def real_zk_app():
-    real_zk_app = KazooClient(hosts=os.environ.get('ZK_HOST'))
-    yield real_zk_app
+def mock_zk_app():
+    mock_zk_app = KazooClient(hosts=os.environ.get('ZK_HOST'))
+    mock_zk_app.start()
+    yield mock_zk_app
+    mock_zk_app.stop()
 
+# ~------------------------------------------------~
 @pytest.fixture
 def utility():
     return Utility
@@ -64,6 +61,23 @@ def mock_add_comment():
 
 
 class Utility:
+    @staticmethod
+    def mock_zk_get_children(zk_client):
+        return zk_get_storage_children(zk_client)
+
+    @staticmethod
+    def mock_zk_create_storage_nodes(zk_client, num):
+        zk_client.ensure_path('/storage')
+        for i in range(num):
+            if not zk_client.exists('/storage/child'+str(i)):
+                zk_client.create('/storage/child'+str(i), b"1000")
+
+    @staticmethod
+    def mock_zk_delete_storage_nodes(zk_client, num):
+        for i in range(num):
+            if zk_client.exists('/storage/child'+str(i)):
+                zk_client.delete('/storage/child'+str(i))
+
     @staticmethod
     def mock_token():
         # identity = user

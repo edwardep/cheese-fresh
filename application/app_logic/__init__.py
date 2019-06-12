@@ -4,6 +4,7 @@ from os import environ
 from kazoo.client import KazooClient
 from flask_mongoengine import MongoEngine
 from flask_jwt_extended import JWTManager
+import time
 
 app = Flask(__name__)
 
@@ -11,6 +12,9 @@ app.config.from_envvar('APP_CONFIG_FILE')
 app.config['MONGODB_HOST'] = environ.get('MONGODB_HOST')
 app.config['ZK_HOST'] = environ.get('ZK_HOST')
 STORAGE_HOST = environ.get('STORAGE_HOST')
+
+MAX_RETRIES = 3
+
 db = MongoEngine(app)
 jwt = JWTManager(app)
 
@@ -20,14 +24,16 @@ zk_app.start()
 zk_app.ensure_path("/app")
 
 
-def zk_get_storage_children():
-    zk_children = zk_app.get_children('/storage')
-    count = 0
-    for each in zk_children:
-        if zk_app.exists("/storage/" + each):
-            count = count+1
-    return count
-    
+def zk_get_storage_children(zk_client):
+    retries = 0
+    while len(zk_client.get_children('/storage')) < 1 and retries < MAX_RETRIES:
+        retries += 1
+        time.sleep(1)
+
+    if retries == MAX_RETRIES:
+        return []
+    return zk_client.get_children('/storage')
+
 
 CORS(app)
 from .routes import api_blueprint
