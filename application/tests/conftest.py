@@ -10,8 +10,8 @@ import os
 from app_logic import zk_get_storage_children
 from mongoengine import connect
 from flask_jwt_extended import create_access_token
+from app_logic import STORAGE_HOST
 
-test_get = True
 
 from kazoo.testing import KazooTestCase
 
@@ -27,7 +27,6 @@ def client():
     client = app.test_client()
     db = connect('cheese-test')
     db.drop_database('cheese-test')
-
     yield client
     db.drop_database('cheese-test')
 
@@ -69,14 +68,14 @@ class Utility:
     def mock_zk_create_storage_nodes(zk_client, num):
         zk_client.ensure_path('/storage')
         for i in range(num):
-            if not zk_client.exists('/storage/child'+str(i)):
-                zk_client.create('/storage/child'+str(i), b"1000")
+            if not zk_client.exists('/storage/'+str(i)):
+                zk_client.create('/storage/'+str(i), b"1000")
 
     @staticmethod
     def mock_zk_delete_storage_nodes(zk_client, num):
         for i in range(num):
-            if zk_client.exists('/storage/child'+str(i)):
-                zk_client.delete('/storage/child'+str(i))
+            if zk_client.exists('/storage/'+str(i)):
+                zk_client.delete('/storage/'+str(i))
 
     @staticmethod
     def mock_token():
@@ -117,6 +116,7 @@ class Utility:
         image = Image()
         image.path = '/uploads/'+filename
         image.owner = owner
+        image.storage.append(('http://'+STORAGE_HOST[0]+':100', 0))
         image.save()
         image.iid = str(image.id)
         image.save()

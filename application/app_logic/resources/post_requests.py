@@ -9,6 +9,8 @@ from ..data.comments import Comment
 import uuid
 import requests
 from .. import STORAGE_HOST
+from .. import zk_get_storage_children
+from .. import zk_app
 
 '''
 # ------------------------CONTENTS-----------------------------
@@ -131,6 +133,13 @@ class AddImage(Resource):
         if not file or not allowed_file(file.filename):
             return make_response(jsonify('file_extension'), 400)
 
+        if len(zk_get_storage_children(zk_app)) == 0:
+            return make_response(jsonify('storage_down'), 501)
+
+        active_storage_1 = ('http://'+STORAGE_HOST[0]+':100', zk_get_storage_children(zk_app)[0])
+
+
+
         my_string = file.filename
         idx = my_string.index('.')
         filename = secure_filename(my_string[:idx] + '_' + uuid.uuid4().hex +
@@ -138,20 +147,21 @@ class AddImage(Resource):
         image = Image()
         image.path = filename
         image.owner = current_user
+        image.storage.append(active_storage_1)
         image.save()
         image.iid = str(image.id)
         image.save()
         emb_gallery.images.insert(0, image.iid)
         me.save()
 
-       # output = ""
         sendFile = {"file": (filename, file.stream, file.mimetype)}
 
         try:
-            output = requests.post(STORAGE_HOST + '/post_image', files=sendFile)
+            output = requests.post(active_storage_1[0] + active_storage_1[1] + '/post_image', files=sendFile)
             print(output.json())
             return make_response(jsonify('OK'), 201)
         except:
+            print(active_storage_1[0]+active_storage_1[1])
             return make_response(jsonify({'path': 'storage_error'}), 500)
 
         

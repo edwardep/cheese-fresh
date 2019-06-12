@@ -46,7 +46,9 @@ def test_get_galleries_forbidden(client, utility):
     assert response.status_code == 403
 
 
-def test_get_images_success(client, utility):
+def test_get_images_success(client, utility, mock_zk_storage):
+    utility.mock_zk_create_storage_nodes(mock_zk_storage, 1)
+
     utility.mock_user('user')
     utility.mock_gallery('user', 'gallery')
     utility.mock_add_image('user', 'cat_photo.jpg')
@@ -55,7 +57,7 @@ def test_get_images_success(client, utility):
     response = client.get(url, headers=utility.mock_token())
 
     assert response.status_code == 200
-
+    utility.mock_zk_delete_storage_nodes(mock_zk_storage, 1)
 
 def test_get_images_not_found(client, utility):
     utility.mock_user('user')

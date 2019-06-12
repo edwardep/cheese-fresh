@@ -38,7 +38,7 @@ class DeleteImage(Resource):
 
             data = {'filename': image.path}
             try:
-                requests.delete(STORAGE_HOST + '/delete_image', json=data)
+                requests.delete(STORAGE_HOST[0] + '/delete_image', json=data)
                 image.delete()
                 return make_response(jsonify('OK'), 204)
             except:

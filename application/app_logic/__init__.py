@@ -11,7 +11,10 @@ app = Flask(__name__)
 app.config.from_envvar('APP_CONFIG_FILE')
 app.config['MONGODB_HOST'] = environ.get('MONGODB_HOST')
 app.config['ZK_HOST'] = environ.get('ZK_HOST')
-STORAGE_HOST = environ.get('STORAGE_HOST')
+
+STORAGE_HOST = []
+for i in range(1):
+    STORAGE_HOST.append(environ.get('STORAGE_HOST_'+str(i)))
 
 MAX_RETRIES = 3
 
@@ -26,6 +29,9 @@ zk_app.ensure_path("/app")
 
 def zk_get_storage_children(zk_client):
     retries = 0
+    if not zk_client.exists('/storage'):
+        return []
+
     while len(zk_client.get_children('/storage')) < 1 and retries < MAX_RETRIES:
         retries += 1
         time.sleep(1)
