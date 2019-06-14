@@ -9,6 +9,8 @@ api_blueprint = Blueprint('api', __name__)
 api = Api(api_blueprint)
 
 
+api.add_resource(post_requests.SampleUsers, '/sample_users')
+
 # ----------------------GET---------------------------------------
 api.add_resource(get_requests.index, '/')
 api.add_resource(get_requests.GetPublicProfile, '/public_profile')

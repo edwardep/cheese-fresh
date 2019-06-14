@@ -61,4 +61,5 @@ def delete_image():
 def get_uploads(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-client.create('/storage/'+app.config['STORAGE_ID'], b"1000", ephemeral=True)
+if not client.exists('/storage/'+app.config['STORAGE_ID']):
+    client.create('/storage/'+app.config['STORAGE_ID'], b"1000", ephemeral=True)

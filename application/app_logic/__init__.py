@@ -13,7 +13,7 @@ app.config['MONGODB_HOST'] = environ.get('MONGODB_HOST')
 app.config['ZK_HOST'] = environ.get('ZK_HOST')
 
 STORAGE_HOST = []
-for i in range(1):
+for i in range(2):
     STORAGE_HOST.append(environ.get('STORAGE_HOST_'+str(i)))
 
 MAX_RETRIES = 3
@@ -32,12 +32,12 @@ def zk_get_storage_children(zk_client):
     if not zk_client.exists('/storage'):
         return []
 
-    while len(zk_client.get_children('/storage')) < 1 and retries < MAX_RETRIES:
+    while len(zk_client.get_children('/storage')) < 2 and retries < MAX_RETRIES:
         retries += 1
         time.sleep(1)
 
-    if retries == MAX_RETRIES:
-        return []
+    # if retries == MAX_RETRIES:
+    #     return []
     return zk_client.get_children('/storage')
 
 

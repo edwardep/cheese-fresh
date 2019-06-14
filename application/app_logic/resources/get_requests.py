@@ -6,7 +6,7 @@ from ..data.users import User
 from ..data.galleries import Gallery
 from ..data.images import Image
 from ..data.follow_obj import FollowObj
-from .. import zk_app
+from .. import zk_app, zk_get_storage_children
 import uuid
 import requests
 import string
@@ -141,13 +141,18 @@ class GalleryPhotos(Resource):
             return make_response(jsonify(output), 404)
         for image_id in gallery.images:
             image = Image.objects(iid=image_id).first()
+            
 
-            if zk_app.exists('/storage/'+str(image.storage[0][1])):
-                this_path = image.storage[0][0] + str(image.storage[0][1]) + image.path
-            # elif zk_app.exists('/storage/'+image.storage[1][1]):
-            #     this_path = image.storage[1][0]+image.storage[1][1]+image.path
-            else:
+            active_nodes = zk_get_storage_children(zk_app)
+            if len(active_nodes) == 0:
                 continue
+            else:
+                if zk_app.exists('/storage/'+str(image.storage[0][1])):
+                    this_path = image.storage[0][0] + str(image.storage[0][1]) + '/' + image.path
+                elif zk_app.exists('/storage/'+str(image.storage[1][1])):
+                    this_path = image.storage[1][0] + str(image.storage[1][1]) + '/' + image.path
+                else:
+                    continue
             
             output.append({
                 'id': image.iid,

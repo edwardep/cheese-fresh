@@ -11,10 +11,13 @@ services:
     environment:
       - FLASK_APP=app_logic
       - FLASK_ENV=development
+      - ZK_HOST=zookeeper
       - MONGODB_HOST=mongodb
-      - STORAGE_HOST=http://storage_server:1000
+      - STORAGE_HOST_0=storage_server_0
+      - STORAGE_HOST_1=storage_server_1
       - APP_CONFIG_FILE=config/development.cfg
-    depends_on: 
+    depends_on:
+      - zookeeper 
       - mongodb
   authentication:
     build:
@@ -31,7 +34,7 @@ services:
       - APP_CONFIG_FILE=config/development.cfg
     depends_on: 
       - mongodb
-  storage_server:
+  storage_server_0:
     build:
       context: ./storage
       dockerfile: Dockerfile
@@ -40,10 +43,29 @@ services:
     environment:
       - FLASK_ENV=development
       - FLASK_APP=server
-      - STORAGE_PORT=1000
+      - ZK_HOST=zookeeper
+      - STORAGE_ID=0
       - APP_CONFIG_FILE=config/development.cfg
     ports:
       - 1000:1000
+    depends_on:
+      - zookeeper
+  storage_server_1:
+    build:
+      context: ./storage
+      dockerfile: Dockerfile
+    volumes:
+      - './storage:/app'
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=server
+      - ZK_HOST=zookeeper
+      - STORAGE_ID=1
+      - APP_CONFIG_FILE=config/development.cfg
+    ports:
+      - 1001:1001
+    depends_on:
+      - zookeeper
   mongodb:
     image: 'mongo:latest'
     environment:
@@ -51,3 +73,19 @@ services:
     volumes:
       - ./data/db:/data/db
     command: mongod --smallfiles #--quiet
+    logging:
+      driver: none
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181'
+      - '2888'
+      - '3888'
+    volumes:
+      - 'zookeeper_data_dev:/bitnami'
+    environment:
+      - ZOO_SERVER_ID=1
+      - ALLOW_ANONYMOUS_LOGIN=yes
+volumes:
+  zookeeper_data_dev:
+    driver: local

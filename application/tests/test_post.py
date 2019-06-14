@@ -47,7 +47,7 @@ def test_post_gallery_success(client, utility):
     assert response.status_code == 201
 
 def test_post_image_success(client, utility, mock_zk_storage):
-    utility.mock_zk_create_storage_nodes(mock_zk_storage, 1)
+    utility.mock_zk_create_storage_nodes(mock_zk_storage, 2)
 
     utility.mock_user('user')
     utility.mock_gallery('user', 'gallery')

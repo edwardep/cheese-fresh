@@ -26,7 +26,9 @@ test_up:
 	@#docker logs --tail 100 app_test -f
 	@#docker logs --tail 10 auth_test -f
 	@docker stop mongo_test
+	@docker stop cheese-fresh_zookeeper_1
 	@# docker stop storage_test
+
 test_storage:
 	docker-compose -f $(TEST_YML) run storage_server
 
