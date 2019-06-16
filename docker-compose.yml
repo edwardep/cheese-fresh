@@ -31,10 +31,12 @@ services:
       - 4000:4000
     environment:
       - FLASK_APP=auth
+      - ZK_HOST=zookeeper
       - FLASK_ENV=development
       - MONGODB_HOST=mongodb
       - APP_CONFIG_FILE=config/development.cfg
-    depends_on: 
+    depends_on:
+      - zookeeper 
       - mongodb
   storage_server_0:
     build:

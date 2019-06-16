@@ -3,7 +3,11 @@ from flask_cors import CORS
 import os
 from flask_jwt_extended import JWTManager, jwt_required
 from kazoo.client import KazooClient
+from multiprocessing import Value
 
+count_post_requests = Value('i', 0)
+count_get_requests = Value('i', 0)
+count_delete_requests = Value('i', 0)
 
 app = Flask(__name__)
 
@@ -32,9 +36,17 @@ def index():
 @app.route('/post_image', methods=['POST'])
 #@jwt_required
 def post_image():
-    file = request.files['file']
-    assert os.path.exists(app.config['UPLOAD_FOLDER']) == True
+    with count_post_requests.get_lock():
+        count_post_requests.value += 1
+    with open('Output.txt', 'r') as file:
+    # read a list of lines into data
+        data = file.readlines()
+    data.insert(0, "Post requests count: "+str(count_post_requests.value)+"\n")
+    with open('Output.txt', 'w') as file:
+        file.writelines( data )
 
+    file = request.files['file']
+    assert os.path.exists(app.config['UPLOAD_FOLDER']) == True 
     try:
 
         path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
@@ -47,7 +59,15 @@ def post_image():
 @app.route('/delete_image', methods=['DELETE'])
 #@jwt_required
 def delete_image():
-
+    with count_delete_requests.get_lock():
+        count_delete_requests.value += 1
+    with open('Output.txt', 'r') as file:
+    # read a list of lines into data
+        data = file.readlines()
+    data.insert(2,"Delete requests count: "+str(count_delete_requests.value)+"\n")
+    with open('Output.txt', 'w') as file:
+        file.writelines( data )
+    
     filename = request.json['filename']
 
     #assert os.path.exists(app.config['UPLOAD_FOLDER']) == True
@@ -63,6 +83,15 @@ def delete_image():
 
 @app.route('/<filename>')
 def get_uploads(filename):
+    with count_get_requests.get_lock():
+        count_get_requests.value += 1
+    with open('Output.txt', 'r') as file:
+    # read a list of lines into data
+        data = file.readlines()
+    data.insert(1,"Get requests count: "+str(count_get_requests.value)+"\n")
+    with open('Output.txt', 'w') as file:
+        file.writelines( data )
+    
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
