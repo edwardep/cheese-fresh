@@ -68,6 +68,33 @@ def test_get_images_not_found(client, utility):
 
     assert response.status_code == 404
 
+def test_get_images_storage_not_found(client, utility, mock_zk_storage):
+
+    # Create zk_storage node
+    utility.mock_zk_create_storage_nodes(mock_zk_storage, 1)
+
+    # Add two images
+    utility.mock_user('user')
+    utility.mock_gallery('user', 'gallery')
+    utility.mock_add_image('user', 'cat_photo.jpg')
+    utility.mock_add_image('user', 'cat_photo2.jpg')
+
+    url = '/gallery_photos?username=user&gallery_title=gallery'
+    response = client.get(url, headers=utility.mock_token())
+
+    # Assert that the number of returned 'image object' EQUALS to the number of added images
+    assert response.status_code == 200
+    assert len(response.json) == utility.get_image_count('user')
+    
+    # Delete the zk_storage node
+    utility.mock_zk_delete_storage_nodes(mock_zk_storage, 1)
+
+    url = '/gallery_photos?username=user&gallery_title=gallery'
+    response = client.get(url, headers=utility.mock_token())
+
+    # Image Objects returned should be 0
+    assert response.status_code == 501
+
 
 def test_get_comments_success(client, utility):
     utility.mock_user('user')

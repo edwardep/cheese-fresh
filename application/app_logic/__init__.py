@@ -13,7 +13,7 @@ app.config['MONGODB_HOST'] = environ.get('MONGODB_HOST')
 app.config['ZK_HOST'] = environ.get('ZK_HOST')
 
 STORAGE_HOST = []
-for i in range(2):
+for i in range(4):
     STORAGE_HOST.append(environ.get('STORAGE_HOST_'+str(i)))
 
 MAX_RETRIES = 3
@@ -25,6 +25,9 @@ jwt = JWTManager(app)
 zk_app = KazooClient(hosts=app.config['ZK_HOST'])
 zk_app.start()
 zk_app.ensure_path("/app")
+
+if not zk_app.exists('/app/1'):
+    zk_app.create('/app/1', b"5000", ephemeral=True)
 
 
 def zk_get_storage_children(zk_client):

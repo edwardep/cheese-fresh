@@ -13,19 +13,10 @@ from flask_jwt_extended import create_access_token
 from app_logic import STORAGE_HOST
 
 
-from kazoo.testing import KazooTestCase
-
-class MyTest(KazooTestCase):
-    def testmycode(self):
-        self.client.ensure_path('/test/path')
-        result = self.client.get('/test/path')
-
-
-
 @pytest.fixture
 def client():
     client = app.test_client()
-    db = connect('cheese-test')
+    db = connect('cheese-test', alias='cheese_test', host='mongodb')
     db.drop_database('cheese-test')
     yield client
     db.drop_database('cheese-test')
@@ -49,6 +40,10 @@ def mock_zk_app():
     yield mock_zk_app
     mock_zk_app.stop()
 
+@pytest.fixture
+def real_zk_app():
+    real_zk_app = zk_app
+    yield real_zk_app
 # ~------------------------------------------------~
 @pytest.fixture
 def utility():
@@ -137,3 +132,8 @@ class Utility:
         image.comments.append(comment)
         image.save()
         return comment._id
+    
+    @staticmethod
+    def get_image_count(owner):
+        me = User.objects(username=owner).first()
+        return len(me.galleries[0].images)

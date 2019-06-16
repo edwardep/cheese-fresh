@@ -8,6 +8,7 @@ from ..data.images import Image
 from ..data.comments import Comment
 import uuid
 import requests
+import random
 from .. import STORAGE_HOST
 from .. import zk_get_storage_children
 from .. import zk_app
@@ -158,9 +159,13 @@ class AddImage(Resource):
         if len(zk_get_storage_children(zk_app)) < 2:
             return make_response(jsonify('storage_down'), 501)
 
-        active_storage_1 = ('http://'+STORAGE_HOST[0]+':100', zk_get_storage_children(zk_app)[0])
-        active_storage_2 = ('http://'+STORAGE_HOST[1]+':100', zk_get_storage_children(zk_app)[1])
 
+        rand_storage = random.sample(zk_get_storage_children(zk_app), 2)
+        sh_1 = int(rand_storage[0])
+        sh_2 = int(rand_storage[1])
+
+        selected_storage_1 = ('http://'+STORAGE_HOST[sh_1]+':100', rand_storage[0])
+        selected_storage_2 = ('http://'+STORAGE_HOST[sh_2]+':100', rand_storage[1])
 
         my_string = file.filename
         idx = my_string.index('.')
@@ -169,8 +174,8 @@ class AddImage(Resource):
         image = Image()
         image.path = filename
         image.owner = current_user
-        image.storage.append(active_storage_1)
-        image.storage.append(active_storage_2)
+        image.storage.append(selected_storage_1)
+        image.storage.append(selected_storage_2)
         image.save()
         image.iid = str(image.id)
         image.save()
@@ -181,16 +186,13 @@ class AddImage(Resource):
 
         try:
             sendFile = {"file": (filename, file.stream, file.mimetype)}
-            output = requests.post(active_storage_1[0] + active_storage_1[1] + '/post_image', files=sendFile)
-            print(output.json())
+            requests.post(selected_storage_1[0] + selected_storage_1[1] + '/post_image', files=sendFile)
             
             file.seek(0)
             sendFile = {"file": (filename, file.stream, file.mimetype)}
-            output = requests.post(active_storage_2[0] + active_storage_2[1] + '/post_image', files=sendFile)
-            print(output.json())
+            requests.post(selected_storage_2[0] + selected_storage_2[1] + '/post_image', files=sendFile)
             return make_response(jsonify('OK'), 201)
         except:
-            print(active_storage_1[0]+active_storage_1[1])
             return make_response(jsonify({'path': 'storage_error'}), 500)
 
         

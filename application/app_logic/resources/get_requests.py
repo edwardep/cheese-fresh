@@ -163,6 +163,10 @@ class GalleryPhotos(Resource):
                 'comments': image.comments
             })
 
+        # if no images were Returned but they should --> Storages are down
+        if len(output) == 0 and len(gallery.images) != 0:
+            return make_response(jsonify('storage_down'), 501)
+            
         return make_response(jsonify(output), 200)
 
 

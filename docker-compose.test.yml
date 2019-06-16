@@ -14,6 +14,8 @@ services:
       - MONGODB_HOST=mongodb
       - STORAGE_HOST_0=storage_server_0
       - STORAGE_HOST_1=storage_server_1
+      - STORAGE_HOST_2=storage_server_2
+      - STORAGE_HOST_3=storage_server_3
       - APP_CONFIG_FILE=config/testing.cfg
     depends_on:
       - zookeeper
@@ -27,6 +29,7 @@ services:
     volumes:
       - './authentication:/app'
     environment:
+      - ZK_HOST=zookeeper
       - FLASK_ENV=development
       - MONGODB_HOST=mongodb
       - APP_CONFIG_FILE=config/testing.cfg
@@ -59,6 +62,36 @@ services:
       - ZK_HOST=zookeeper
       - FLASK_ENV=development
       - STORAGE_ID=1
+      - APP_CONFIG_FILE=config/testing.cfg
+    depends_on:
+      - zookeeper
+  storage_server_2:
+    container_name: storage_test_2
+    build:
+      context: ./storage
+      dockerfile: Dockerfile.test
+    command: 'python -m pytest -v -s -p no:cacheprovider -p no:warnings --color=yes'
+    volumes:
+      - './storage:/app'
+    environment:
+      - ZK_HOST=zookeeper
+      - FLASK_ENV=development
+      - STORAGE_ID=2
+      - APP_CONFIG_FILE=config/testing.cfg
+    depends_on:
+      - zookeeper
+  storage_server_3:
+    container_name: storage_test_3
+    build:
+      context: ./storage
+      dockerfile: Dockerfile.test
+    command: 'python -m pytest -v -s -p no:cacheprovider -p no:warnings --color=yes'
+    volumes:
+      - './storage:/app'
+    environment:
+      - ZK_HOST=zookeeper
+      - FLASK_ENV=development
+      - STORAGE_ID=3
       - APP_CONFIG_FILE=config/testing.cfg
     depends_on:
       - zookeeper

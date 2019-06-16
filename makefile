@@ -20,9 +20,12 @@ test_build: clear_cache
 
 test_up:
 	@#docker-compose -f $(TEST_YML) up
-	# docker-compose -f $(TEST_YML) run authentication
+	docker-compose -f $(TEST_YML) run authentication
 	docker-compose -f $(TEST_YML) run application
-	#docker-compose -f $(TEST_YML) run storage_server
+	docker-compose -f $(TEST_YML) run storage_server_0
+	docker-compose -f $(TEST_YML) run storage_server_1
+	docker-compose -f $(TEST_YML) run storage_server_2
+	docker-compose -f $(TEST_YML) run storage_server_3
 	@#docker logs --tail 100 app_test -f
 	@#docker logs --tail 10 auth_test -f
 	@docker stop mongo_test

@@ -47,7 +47,7 @@ def test_post_gallery_success(client, utility):
     assert response.status_code == 201
 
 def test_post_image_success(client, utility, mock_zk_storage):
-    utility.mock_zk_create_storage_nodes(mock_zk_storage, 2)
+    utility.mock_zk_create_storage_nodes(mock_zk_storage, 4)
 
     utility.mock_user('user')
     utility.mock_gallery('user', 'gallery')
@@ -61,6 +61,21 @@ def test_post_image_success(client, utility, mock_zk_storage):
 
     assert response.status_code == 500
 
+
+def test_post_image_insufficient_storages(client, utility, mock_zk_storage):
+    utility.mock_zk_create_storage_nodes(mock_zk_storage, 1)
+
+    utility.mock_user('user')
+    utility.mock_gallery('user', 'gallery')
+
+    url = '/add_image?gallery_title=gallery'
+    data = {'file': (BytesIO(b'IMAGE DATA'), 'tokio.jpg')}
+
+    response = client.post(url, buffered=True,
+                           content_type='multipart/form-data',
+                           data=data, headers=utility.mock_token())
+
+    assert response.status_code == 501
 
 def test_post_image_gallery_not_found(client, utility):
     utility.mock_user('user')

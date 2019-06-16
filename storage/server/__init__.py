@@ -3,6 +3,8 @@ from flask_cors import CORS
 import os
 from flask_jwt_extended import JWTManager, jwt_required
 from kazoo.client import KazooClient
+
+
 app = Flask(__name__)
 
 app.config.from_envvar('APP_CONFIG_FILE')
@@ -19,10 +21,12 @@ client = KazooClient(hosts=app.config['ZK_HOST'])
 client.start()
 client.ensure_path("/storage")
 
+if not client.exists('/storage/'+app.config['STORAGE_ID']):
+    client.create('/storage/'+app.config['STORAGE_ID'], b"1000", ephemeral=True)
 
 @app.route('/')
 def index():
-    return "Hello from ~Storage Server"
+    return "Hello from ~Storage Server "+app.config['STORAGE_ID']+"\n"
 
 
 @app.route('/post_image', methods=['POST'])
@@ -61,5 +65,4 @@ def delete_image():
 def get_uploads(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-if not client.exists('/storage/'+app.config['STORAGE_ID']):
-    client.create('/storage/'+app.config['STORAGE_ID'], b"1000", ephemeral=True)
+
