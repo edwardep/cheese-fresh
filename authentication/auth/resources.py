@@ -48,7 +48,7 @@ class UserRegistration(Resource):
                 return make_response(jsonify({"NotUniqueError": str(e)}), 409)
             else:
                 return make_response(
-                    jsonify({"Unknown exeption occured": str(e)}), 409)
+                    jsonify({"Unknown exeption occured": str(e)}), 500)
 
 
 class UserLogin(Resource):
@@ -84,21 +84,8 @@ class UserLogoutAccess(Resource):
 def Validation(item):
     output = True
     for k, v in item._fields.items():
-        print(v.required, item[k])
+        #print(v.required, item[k])
         if v.required and item[k] == "":
             return False
     return output
 
-
-# @app.after_request
-# def after_request(response):
-#     response.headers.add('Access-Control-Allow-Credentials', 'true')
-#     response.headers[
-#         'Access-Control-Allow-Methods'] = 'DELETE, GET, POST, PUT, OPTIONS'
-#     response.headers[
-#         'Access-Control-Allow-Headers'] = 'Access-Control-Allow-Origin'  # , Set-Cookie, Cookie'
-#     response.headers[
-#         'Access-Control-Expose-Headers'] = 'Authorization, Headers, error'
-#     response.headers['Content-Type'] = 'application/json'
-
-#     return response

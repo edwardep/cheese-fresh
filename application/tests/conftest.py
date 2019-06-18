@@ -75,9 +75,8 @@ class Utility:
     @staticmethod
     def mock_token():
         # identity = user
-        # username = 'user'
-        # token = create_access_token(identity=username)
-        token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NTk4MTY1OTEsIm5iZiI6MTU1OTgxNjU5MSwianRpIjoiNDdlOWI5YTMtODEwNC00MDNjLTg0MjgtMTQyZTVmOGMwNDkxIiwiZXhwIjoxNTYwODE2NTkxLCJpZGVudGl0eSI6InVzZXIiLCJmcmVzaCI6ZmFsc2UsInR5cGUiOiJhY2Nlc3MifQ.7BBLbo3-1nUGNn-oEsHRPNbZHpRmmgN5pRJvFAaaI6s'
+        # expiration = False
+        token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1NjA4NTkzNjcsIm5iZiI6MTU2MDg1OTM2NywianRpIjoiZjAyYzVhZjEtNGM1OS00ZTEwLWI3NzYtZjQxYjczZGVhYTA3IiwiaWRlbnRpdHkiOiJ1c2VyIiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIn0.If6TqeTNMxf7LbP_XID14Xsu1R0hGB3o9_gNtDcziXk'
         return [('Authorization', 'Bearer ' + token)]
 
     @staticmethod

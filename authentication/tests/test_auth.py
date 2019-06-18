@@ -61,7 +61,6 @@ def test_user_logout_success(client, utility):
 
     # get a valid access token from the response
     token = response.headers['Authorization']
-
     # pass token as headers argument
     url = '/logout'
     response = client.get(url, headers=[('Authorization', 'Bearer ' + token)])

@@ -1,4 +1,3 @@
-
 from flask import Flask
 from flask_cors import CORS
 from os import environ
@@ -26,3 +25,16 @@ if not zk_auth.exists('/auth/1'):
 CORS(app)
 from .routes import api_blueprint
 app.register_blueprint(api_blueprint)
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers[
+        'Access-Control-Allow-Methods'] = 'DELETE, GET, POST, PUT, OPTIONS'
+    response.headers[
+        'Access-Control-Allow-Headers'] = 'Access-Control-Allow-Origin'
+    response.headers[
+        'Access-Control-Expose-Headers'] = 'Authorization, Headers, error'
+    response.headers['Content-Type'] = 'application/json'
+
+    return response

@@ -5,7 +5,6 @@ services:
     build:
       context: ./application
       dockerfile: Dockerfile.test
-    command: 'python -m pytest -v -s -p no:cacheprovider -p no:warnings'
     volumes:
       - './application:/app'
     environment:
@@ -34,13 +33,13 @@ services:
       - MONGODB_HOST=mongodb
       - APP_CONFIG_FILE=config/testing.cfg
     depends_on: 
+      - zookeeper
       - mongodb
   storage_server_0:
     container_name: storage_test_0
     build:
       context: ./storage
       dockerfile: Dockerfile.test
-    command: 'python -m pytest -v -s -p no:cacheprovider -p no:warnings --color=yes'
     volumes:
       - './storage:/app'
     environment:
