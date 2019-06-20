@@ -95,7 +95,6 @@ services:
     depends_on:
       - zookeeper
   mongodb:
-    container_name: mongo_test
     image: 'mongo:latest'
     environment:
       - MONGO_DATA_DIR=/data/db
