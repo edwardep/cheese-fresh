@@ -16,12 +16,15 @@ endif
 
 # disable caching in dev & test mode because of issues with mounted dir
 # disable warnings, known issue with mongoengine Driver
-PYT_BASIC_FLAGS = -p no:cacheprovider -p no:warnings
+PYT_BASIC_FLAGS = -p no:cacheprovider -p no:warnings --durations=1
 PYT_FLAGS = $(VERBOSE) $(STD_OUT) $(PYT_BASIC_FLAGS)
+JEST_FLAGS =  -- --colors --verbose
 
 PYTEST = python -m pytest
+JEST = npm test
 REMOVE_AFTER = --rm
 
+WEB = $(REMOVE_AFTER) web
 APPLICATION = $(REMOVE_AFTER) application
 AUTHENTICATION = $(REMOVE_AFTER) authentication
 STORAGE_0 = $(REMOVE_AFTER) storage_server_0
@@ -31,12 +34,16 @@ STORAGE_3 = $(REMOVE_AFTER) storage_server_3
 
 ##@ Testing
 .PHONY: test_web test_app test_auth test_storage test_all
-test_web:														## run web's tests
-test_app: 			run_test_app stop_services					## run application's tests (37)
-test_auth: 			run_test_auth stop_services					## run authentication's tests (11)
-test_storage: 		run_test_storage stop_services				## run storage's tests (4)
-test_all:			run_test_app run_test_auth stop_services	## run all of the above
-										
+test_web:		run_test_web								## run web's tests
+test_app: 		run_test_app stop_services					## run application's tests (37)
+test_auth: 		run_test_auth stop_services					## run authentication's tests (11)
+test_storage: 	run_test_storage stop_services				## run storage's tests (4)
+test_all:		run_test_web run_test_app run_test_auth run_test_storage stop_services	## run all of the above
+
+
+run_test_web:
+	@$(DC) $(TEST_YML) run $(WEB) $(JEST) $(JEST_FLAGS)
+
 run_test_app:
 	@$(DC) $(TEST_YML) run $(APPLICATION) $(PYTEST) $(PYT_FLAGS)
 
@@ -61,7 +68,7 @@ build_tests: clear_cache				## Build all testing containers
 
 ##@ Run Mode
 dev: clear_cache			## docker-compose up --build
-	docker-compose -f $(DEV_YML) up --build
+	$(DC) $(DEV_YML) up --build
 
 
 

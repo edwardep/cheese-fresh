@@ -1,5 +1,15 @@
 version: '3'
 services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.test
+    volumes:
+      - './web:/app'
+      - '/app/node_modules'
+    environment:
+      - REACT_APP_AUTH=http://127.0.0.1:4000
+      - CI=true
   application:
     container_name: app_test
     build:
