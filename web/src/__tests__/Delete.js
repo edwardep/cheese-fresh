@@ -20,7 +20,7 @@ it("delete image", async () => {
     {
       data: payload,
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }
@@ -46,7 +46,7 @@ it("delete gallery", async () => {
     {
       data: payload,
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }
@@ -72,7 +72,7 @@ it("delete comment", async () => {
     {
       data: payload,
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }
@@ -98,7 +98,7 @@ it("delete follower", async () => {
     {
       data: payload,
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }

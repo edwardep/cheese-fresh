@@ -74,7 +74,7 @@ it("post follow", async () => {
     payload,
     {
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }
@@ -100,7 +100,7 @@ it("post gallery", async () => {
     payload,
     {
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }
@@ -126,7 +126,7 @@ it("post comment", async () => {
     payload,
     {
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }
@@ -154,7 +154,7 @@ it("post image", async () => {
     {
       params: query,
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }
@@ -182,7 +182,7 @@ it("post profile_image", async () => {
     payload,
     {
       headers: {
-        Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         withCredentials: true
       }
     }

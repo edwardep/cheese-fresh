@@ -6,7 +6,7 @@ export async function image(payload) {
   var data = {
     data: payload,
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };
@@ -31,7 +31,7 @@ export async function gallery(payload) {
   var data = {
     data: payload,
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };
@@ -56,7 +56,7 @@ export async function comment(payload) {
   var data = {
     data: payload,
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };
@@ -81,7 +81,7 @@ export async function follower(payload) {
   var data = {
     data: payload,
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };

@@ -58,7 +58,7 @@ class UserLogin(Resource):
         # user lookup
         current_user = User.objects(username=data['username']).first()
         if not current_user:
-            return make_response('404', 404)
+            return make_response(jsonify('404'), 404)
 
         # username & password validation
         if check_password_hash(current_user.password, data['password']):
@@ -70,7 +70,7 @@ class UserLogin(Resource):
 
             return make_response(resp, 200, headers)
         else:
-            return make_response('401', 401)
+            return make_response(jsonify('401'), 401)
 
 
 class UserLogoutAccess(Resource):
@@ -88,4 +88,3 @@ def Validation(item):
         if v.required and item[k] == "":
             return False
     return output
-

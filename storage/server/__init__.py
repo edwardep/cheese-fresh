@@ -94,4 +94,15 @@ def get_uploads(filename):
     
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers[
+        'Access-Control-Allow-Methods'] = 'GET, POST, PUT, OPTIONS, DELETE'
+    response.headers[
+        'Access-Control-Allow-Headers'] = 'Access-Control-Allow-Origin'
+    response.headers[
+        'Access-Control-Expose-Headers'] = 'Authorization, Headers, error'
+    response.headers['Content-Type'] = 'application/json, multipart/form-data'
 
+    return response

@@ -21,6 +21,7 @@ import random
 # __________________________RestorePassword (/restore_password)________________
 '''
 
+
 class index(Resource):
     def get(self):
         return "Hello from ~Application"
@@ -77,6 +78,17 @@ class GetPublicProfile(Resource):
                 follow.profile_image = follower.profile_image
                 followers_list.append(follow)
 
+        image = Image.objects(iid=user.profile_image).first()
+        active_nodes = zk_get_storage_children(zk_app)
+        this_path = ''
+        if len(active_nodes) > 0 and image:
+            if zk_app.exists('/storage/'+str(image.storage[0][1])):
+                this_path = 'http://localhost:100' + \
+                    str(image.storage[0][1]) + '/' + image.path
+            elif zk_app.exists('/storage/'+str(image.storage[1][1])):
+                this_path = 'http://localhost:100' + \
+                    str(image.storage[1][1]) + '/' + image.path
+
         output = {
             'username': user.username,
             'reg_date': user.registered_date,
@@ -86,13 +98,17 @@ class GetPublicProfile(Resource):
             'followers': followers_list,
             'followers_num': len(user.followers),
             'following_num': len(user.following),
-            'profile_image': user.profile_image
+            'profile_image': this_path
         }
         return make_response(jsonify(output), 200)
+
+
 '''
  Used to get Gallery titles from galleries that belong to me or to a friend
  returns --> list of titles
 '''
+
+
 class GetGalleries(Resource):
     @jwt_required
     def get(self):
@@ -113,10 +129,12 @@ class GetGalleries(Resource):
         output = {'galleries': galleries, 'my_profile': my_profile}
         return make_response(jsonify(output), 200)
 
+
 '''
  Used when we want all images from a gallery
  returns --> image info
 '''
+
 
 class GalleryPhotos(Resource):
     @jwt_required
@@ -141,19 +159,20 @@ class GalleryPhotos(Resource):
             return make_response(jsonify(output), 404)
         for image_id in gallery.images:
             image = Image.objects(iid=image_id).first()
-            
 
             active_nodes = zk_get_storage_children(zk_app)
             if len(active_nodes) == 0:
                 continue
             else:
                 if zk_app.exists('/storage/'+str(image.storage[0][1])):
-                    this_path = image.storage[0][0] + str(image.storage[0][1]) + '/' + image.path
+                    this_path = image.storage[0][0] + \
+                        str(image.storage[0][1]) + '/' + image.path
                 elif zk_app.exists('/storage/'+str(image.storage[1][1])):
-                    this_path = image.storage[1][0] + str(image.storage[1][1]) + '/' + image.path
+                    this_path = image.storage[1][0] + \
+                        str(image.storage[1][1]) + '/' + image.path
                 else:
                     continue
-            
+
             output.append({
                 'id': image.iid,
                 'path': this_path,
@@ -166,7 +185,7 @@ class GalleryPhotos(Resource):
         # if no images were Returned but they should --> Storages are down
         if len(output) == 0 and len(gallery.images) != 0:
             return make_response(jsonify('storage_down'), 501)
-            
+
         return make_response(jsonify(output), 200)
 
 

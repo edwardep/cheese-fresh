@@ -2,13 +2,13 @@ import axios from "axios";
 
 export async function register(payload) {
   var apiBaseUrl = process.env.REACT_APP_AUTH + "/register";
+
   let res = false;
   await axios
     .post(apiBaseUrl, payload, { withCredentials: true })
     .then(response => {
       if (response.status === 201) {
-        // localStorage.setItem("jwt_token", response.headers["authorization"]);
-        localStorage.setItem("jwt_token", 1111111);
+        localStorage.setItem("jwt_token", response.headers["authorization"]);
         res = true;
       }
     })
@@ -27,8 +27,8 @@ export async function login(payload) {
     .post(apiBaseUrl, payload, { withCredentials: true })
     .then(response => {
       if (response.status === 200) {
-        // localStorage.setItem("jwt_token", response.headers["authorization"]);
-        localStorage.setItem("jwt_token", 1111111);
+        localStorage.setItem("jwt_token", response.headers["authorization"]);
+        //localStorage.setItem("jwt_token", 1111111);
         res = true;
       }
     })
@@ -45,7 +45,7 @@ export async function follow(payload) {
   let res = false;
   var headers = {
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };
@@ -70,7 +70,7 @@ export async function gallery(payload) {
   let res = false;
   var headers = {
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };
@@ -94,7 +94,7 @@ export async function comment(payload) {
   let res = false;
   var headers = {
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };
@@ -119,7 +119,7 @@ export async function image(payload, query) {
   var headers = {
     params: query,
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };
@@ -140,10 +140,10 @@ export async function image(payload, query) {
 
 export async function profile_image(payload) {
   var apiBaseUrl = process.env.REACT_APP_APP + "/profile_picture";
-  let res = false;
+  let res = {};
   var headers = {
     headers: {
-      Authorization: "Bearer" + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
       withCredentials: true
     }
   };
@@ -151,12 +151,12 @@ export async function profile_image(payload) {
     .post(apiBaseUrl, payload, headers)
     .then(response => {
       if (response.status === 201) {
-        res = true;
+        res = response.data;
       }
     })
     .catch(error => {
       if (error.response.status > 300) {
-        res = false;
+        //res = false;
       }
     });
   return res;

@@ -33,7 +33,6 @@ export async function public_profile(query) {
   let res = {};
 
   await axios.get(apiBaseUrl, headers).then(function(response) {
-    localStorage.clear();
     res = response.data;
   });
   return res;
@@ -51,7 +50,6 @@ export async function galleries(query) {
   let res = {};
 
   await axios.get(apiBaseUrl, headers).then(function(response) {
-    localStorage.clear();
     res = response.data;
   });
   return res;
@@ -69,7 +67,6 @@ export async function comments(query) {
   let res = {};
 
   await axios.get(apiBaseUrl, headers).then(function(response) {
-    localStorage.clear();
     res = response.data;
   });
   return res;
@@ -87,7 +84,6 @@ export async function images(query) {
   let res = {};
 
   await axios.get(apiBaseUrl, headers).then(function(response) {
-    localStorage.clear();
     res = response.data;
   });
   return res;

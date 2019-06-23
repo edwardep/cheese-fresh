@@ -101,11 +101,14 @@ export class Register extends Component {
 
       let response = register(payload);
 
-      if (response) {
-        this.props.history.push("/homepage?user=" + payload.username);
-      } else {
-        this.setState({ alert_open: true });
-      }
+      response.then(value => {
+        if (value) {
+          console.log("true");
+          this.props.history.push("/homepage?username=" + payload.username);
+        } else {
+          this.setState({ alert_open: true });
+        }
+      });
     }
   };
   /************************************************************************************************/

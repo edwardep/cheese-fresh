@@ -21,6 +21,7 @@ from .. import zk_app
 # _______________________AddImage(/add_image)________________
 '''
 
+
 class SampleUsers(Resource):
     def post(self):
         user = User()
@@ -32,19 +33,21 @@ class SampleUsers(Resource):
         gallery.owner = 'user'
         user.galleries.insert(0, gallery)
         user.save()
-        # for i in range(5):
-        #     user = User()
-        #     user.username = 'user'+str(i)
-        #     user.email = 'user'+str(i)+'@email.com'
-        #     user.password = 'very_strong_password'
-        #     gallery = Gallery()
-        #     gallery.title = 'gallery'
-        #     gallery.owner = 'user'+str(i)
-        #     user.galleries.insert(0, gallery)
-        #     user.save()
+        for i in range(5):
+            user = User()
+            user.username = 'user'+str(i)
+            user.email = 'user'+str(i)+'@email.com'
+            user.password = 'very_strong_password'
+            gallery = Gallery()
+            gallery.title = 'gallery'
+            gallery.owner = 'user'+str(i)
+            user.galleries.insert(0, gallery)
+            user.save()
         return make_response(jsonify('im ok mom'), 201)
 
 # Used when we want to add or change profile pic
+
+
 class AddProfilePicture(Resource):
     @jwt_required
     def post(self):
@@ -52,34 +55,64 @@ class AddProfilePicture(Resource):
         me = User.objects(username=current_user).first()
 
         if 'file' not in request.files:
-            return make_response(jsonify('BAD'), 400)
+            return make_response(jsonify('file_type'), 400)
         file = request.files['file']
 
         if file.filename == '':
-            return make_response(jsonify('BAD'), 400)
+            return make_response(jsonify('file_name_empty'), 400)
 
         if not file or not allowed_file(file.filename):
-            return make_response(jsonify('BAD'), 400)
+            return make_response(jsonify('file_extension'), 400)
+
+        if len(zk_get_storage_children(zk_app)) < 2:
+            return make_response(jsonify('storage_down'), 501)
+
+        rand_storage = random.sample(zk_get_storage_children(zk_app), 2)
+        sh_1 = int(rand_storage[0])
+        sh_2 = int(rand_storage[1])
+
+        selected_storage_1 = (
+            'http://'+STORAGE_HOST[sh_1]+':100', rand_storage[0])
+        selected_storage_2 = (
+            'http://'+STORAGE_HOST[sh_2]+':100', rand_storage[1])
 
         my_string = file.filename
         idx = my_string.index('.')
         filename = secure_filename(my_string[:idx] + '_' + uuid.uuid4().hex +
                                    my_string[idx:])
 
-        location = '/uploads/' + filename
-        me.profile_image = location
+        image = Image()
+        image.path = filename
+        image.owner = current_user
+        image.storage.append(selected_storage_1)
+        image.storage.append(selected_storage_2)
+        image.save()
+        image.iid = str(image.id)
+        image.save()
+
+        me.profile_image = image.iid
         me.save()
 
-        sendFile = {"file": (filename, file.stream, file.mimetype)}
-
         try:
-            requests.post(STORAGE_HOST + '/post_image', files=sendFile)
-        except:
-            return make_response(jsonify('storage_error'), 500)
+            sendFile = {"file": (filename, file.stream, file.mimetype)}
+            requests.post(
+                selected_storage_1[0] + selected_storage_1[1] + '/post_image', files=sendFile)
 
-        return make_response(jsonify('OK'), 201)
+            file.seek(0)
+            sendFile = {"file": (filename, file.stream, file.mimetype)}
+            requests.post(
+                selected_storage_2[0] + selected_storage_2[1] + '/post_image', files=sendFile)
+            
+            path = 'http://localhost:100'+rand_storage[0]+'/'+filename
+            output = {'profile_image': path}
+            return make_response(jsonify(output), 201)
+        except:
+            return make_response(jsonify({'path': 'storage_error'}), 500)
+
 
 # Used when we want to follow a user/doesn't return anything
+
+
 class Follow(Resource):
     @jwt_required
     def post(self):
@@ -100,14 +133,15 @@ class Follow(Resource):
         me.save()
         return make_response(jsonify('DONE'), 201)
 
-#Used to create a new gallery / returns--> gallery info
+# Used to create a new gallery / returns--> gallery info
+
+
 class AddGallery(Resource):
     @jwt_required
     def post(self):
         current_user = get_jwt_identity()
         gallery = Gallery()
         title = request.json['gallery_title']
-
 
         if not title or title == '':
             title = "Gallery"
@@ -132,6 +166,8 @@ class AddGallery(Resource):
         return make_response(jsonify("OK"), 201)
 
 # Used to add pictures in a gallery/ needs storage service to be successful
+
+
 class AddImage(Resource):
     @jwt_required
     def post(self):
@@ -159,13 +195,14 @@ class AddImage(Resource):
         if len(zk_get_storage_children(zk_app)) < 2:
             return make_response(jsonify('storage_down'), 501)
 
-
         rand_storage = random.sample(zk_get_storage_children(zk_app), 2)
         sh_1 = int(rand_storage[0])
         sh_2 = int(rand_storage[1])
 
-        selected_storage_1 = ('http://'+STORAGE_HOST[sh_1]+':100', rand_storage[0])
-        selected_storage_2 = ('http://'+STORAGE_HOST[sh_2]+':100', rand_storage[1])
+        selected_storage_1 = (
+            'http://'+STORAGE_HOST[sh_1]+':100', rand_storage[0])
+        selected_storage_2 = (
+            'http://'+STORAGE_HOST[sh_2]+':100', rand_storage[1])
 
         my_string = file.filename
         idx = my_string.index('.')
@@ -182,20 +219,19 @@ class AddImage(Resource):
         emb_gallery.images.insert(0, image.iid)
         me.save()
 
-        
-
         try:
             sendFile = {"file": (filename, file.stream, file.mimetype)}
-            requests.post(selected_storage_1[0] + selected_storage_1[1] + '/post_image', files=sendFile)
-            
+            requests.post(
+                selected_storage_1[0] + selected_storage_1[1] + '/post_image', files=sendFile)
+
             file.seek(0)
             sendFile = {"file": (filename, file.stream, file.mimetype)}
-            requests.post(selected_storage_2[0] + selected_storage_2[1] + '/post_image', files=sendFile)
+            requests.post(
+                selected_storage_2[0] + selected_storage_2[1] + '/post_image', files=sendFile)
             return make_response(jsonify('OK'), 201)
         except:
             return make_response(jsonify({'path': 'storage_error'}), 500)
 
-        
 
 # Add comment to a specific photo ---> returns 404,403 or 201
 class AddComment(Resource):
@@ -209,7 +245,7 @@ class AddComment(Resource):
         image = Image.objects(iid=image_id).first()
 
         if not image:
-            output= "Image doesn't exists"
+            output = "Image doesn't exists"
             return make_response(jsonify(output), 404)
 
         user = User.objects(username=current_user).first()
@@ -233,4 +269,3 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-

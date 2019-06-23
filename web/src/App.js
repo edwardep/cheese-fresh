@@ -3,7 +3,7 @@ import Homepage from "./components/Homepage";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
+import { ProtectedRoute } from "./protectedRoute";
 
 //comment
 class App extends Component {
@@ -14,7 +14,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Login} />
             <Route path="/register" component={Register} />
-            <Route exact path="/homepage" component={Homepage} />
+            <ProtectedRoute path="/homepage" component={Homepage} />
           </Switch>
         </Router>
       </div>

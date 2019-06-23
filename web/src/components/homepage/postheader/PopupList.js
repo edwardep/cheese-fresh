@@ -14,6 +14,7 @@ import Paper from "@material-ui/core/Paper";
 import PersonIcon from "@material-ui/icons/Person";
 import AddIcon from "@material-ui/icons/AccountCircleOutlined";
 import CheckCircle from "@material-ui/icons/CheckCircleOutline";
+import { withRouter } from "react-router-dom";
 import blue from "@material-ui/core/colors/blue";
 /************************************************************************************************/
 /* JSX-STYLE */
@@ -24,7 +25,15 @@ const styles = {
   }
 };
 /************************************************************************************************/
+
 export class PopupList extends Component {
+  /************************************************************************************************/
+  /* FUNCTIONS */
+  handleListItemClick = value => {
+    this.props.history.push("/homepage?username=" + value);
+    //window.location.reload();
+  };
+  /************************************************************************************************/
   render() {
     const { classes, list, title } = this.props;
 
@@ -61,4 +70,4 @@ PopupList.propTypes = {
   list: PropTypes.array.isRequired
 };
 
-export default withStyles(styles)(PopupList);
+export default withRouter(withStyles(styles)(PopupList));

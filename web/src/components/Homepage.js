@@ -8,16 +8,19 @@ import React, { Component } from "react";
 import Header from "./homepage/Header";
 import PostHeader from "./homepage/PostHeader";
 import MainBody from "./homepage/MainBody";
+import queryString from "query-string";
 
 export class Homepage extends Component {
   static propTypes = {};
 
   render() {
+    let url = this.props.location.search;
+    let params = queryString.parse(url);
     return (
       <div>
         <Header />
-        <PostHeader queryUser="eseisaki" />
-        <MainBody />
+        <PostHeader queryUser={params} />
+        <MainBody queryUser={params} />
       </div>
     );
   }

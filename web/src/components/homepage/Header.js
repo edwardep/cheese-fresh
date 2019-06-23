@@ -14,7 +14,7 @@ import ExitIcon from "@material-ui/icons/ExitToApp";
 import Grid from "@material-ui/core/Grid";
 import { logout } from "../../axios/Get";
 import { withRouter } from "react-router-dom";
-
+import jwt from "jsonwebtoken";
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
@@ -34,22 +34,25 @@ export class Header extends Component {
   handleLogout = () => {
     let response = logout();
 
-    if (response) {
-      this.props.history.push("/");
-    } else {
-      alert("Server error");
-    }
+    response.then(value => {
+      if (value) {
+        this.props.history.push("/");
+      } else {
+        alert("Server error");
+      }
+    });
   };
   /*RETURNS: nothing
    *DESCRIPTION:  Redirects to homepage of current user.
    *
    */
   handleGoToProfile = () => {
-    // var current_user = jwt.decode(localStorage.getItem("jwt_token"), {
-    //   complete: true
-    // }).payload["identity"];
-    let current_user = "temp_user";
-    this.props.history.push("/homepage?user=" + current_user);
+    var current_user = jwt.decode(localStorage.getItem("jwt_token"), {
+      complete: true
+    }).payload["identity"];
+
+    this.props.history.push("/homepage?username=" + current_user);
+    window.location.reload();
   };
 
   /************************************************************************************************/

@@ -94,11 +94,13 @@ export class Login extends Component {
 
     let response = login(payload);
 
-    if (response) {
-      this.props.history.push("/homepage?user=" + payload.username);
-    } else {
-      this.setState({ alert_open: true });
-    }
+    response.then(value => {
+      if (value) {
+        this.props.history.push("/homepage?username=" + payload.username);
+      } else {
+        this.setState({ alert_open: true });
+      }
+    });
   };
   /************************************************************************************************/
   render() {
@@ -184,7 +186,7 @@ export class Login extends Component {
         {/*Custom alert box for login errors*/}
         <Dialog
           open={this.state.alert_open}
-          onClose={this.handleClose}
+          onClose={() => this.setState({ alert_open: false })}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
@@ -198,7 +200,11 @@ export class Login extends Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClose} color="primary" autoFocus>
+            <Button
+              onClick={() => this.setState({ alert_open: false })}
+              color="primary"
+              autoFocus
+            >
               Close
             </Button>
           </DialogActions>

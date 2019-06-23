@@ -14,9 +14,10 @@ import Fab from "@material-ui/core/Fab";
 import EditIcon from "@material-ui/icons/Edit";
 import FriendIcon from "@material-ui/icons/PersonAdd";
 import Button from "@material-ui/core/Button";
-import PopupList from "./mainbody/postheader/PopupList";
+import PopupList from "./postheader/PopupList";
 import Typography from "@material-ui/core/Typography";
 import Dialog from "@material-ui/core/Dialog";
+import { profile_image, follow } from "../../axios/Post";
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
@@ -48,8 +49,8 @@ const styles = theme => ({
 });
 /************************************************************************************************/
 export class PostHeader extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       username: null,
       email: null,
@@ -60,7 +61,7 @@ export class PostHeader extends Component {
       followers_num: null,
       following_num: null,
       reg_date: null,
-      basicUrl: null,
+      profileImage: null,
       following_open: false,
       followers_open: false
     };
@@ -83,10 +84,36 @@ export class PostHeader extends Component {
         followers_num: value.followers_num,
         following_num: value.following_num,
         reg_date: value.reg_date,
-        basicUrl: value.profile_image
+        profileImage: value.profile_image
       });
     });
   };
+
+  updateProfilePicture = event => {
+    let data = new FormData();
+    data.append("file", event.target.files[0]);
+
+    let response = profile_image(data);
+    response.then(value => {
+      this.setState({
+        profileImage: value.profile_image
+      });
+    });
+    response.catch(error => {
+      console.log(error);
+    });
+  };
+
+  followUser = event => {
+    console.log("click");
+    const payload = { username: this.state.username };
+
+    let response = follow(payload);
+    response.then(value => {
+      this.setState({ is_stranger: false });
+    });
+  };
+
   /************************************************************************************************/
 
   render() {
@@ -98,33 +125,34 @@ export class PostHeader extends Component {
           <Grid item>
             <Avatar
               alt="avatar"
-              src={this.state.basicUrl}
+              src={this.state.profileImage}
               className={classes.profileImage}
             />
-            {/*!!!!!!!!!!!!*/}
-            {/*need to check if user is looking his own profile */}
-            <label htmlFor="upload-file-avatar">
-              <input
-                id="upload-file-avatar"
-                type="file"
-                name="file"
-                onChange={this.UpdateAvatar}
-                style={{ display: "none" }}
-              />
-              <Fab
-                component="span"
-                color="default"
-                type="submit"
-                aria-label="update_avatar"
-                className={classes.avatar_button}
-              >
-                <EditIcon style={{ marginLeft: 18, marginTop: 15 }} />
-              </Fab>
-            </label>
+            {this.state.my_profile ? (
+              <label htmlFor="upload-file-avatar">
+                <input
+                  id="upload-file-avatar"
+                  type="file"
+                  name="file"
+                  onChange={this.updateProfilePicture}
+                  style={{ display: "none" }}
+                />
+                <Fab
+                  component="span"
+                  color="default"
+                  type="submit"
+                  aria-label="update_avatar"
+                  className={classes.avatar_button}
+                >
+                  <EditIcon style={{ marginLeft: 18, marginTop: 15 }} />
+                </Fab>
+              </label>
+            ) : null}
           </Grid>
+
           {/*User name */}
           <Grid item>
-            <h2>{"John Doe"}</h2>
+            <h2>{this.state.username}</h2>
             <Button onClick={() => this.setState({ followers_open: true })}>
               {this.state.followers_num} Followers
             </Button>
@@ -163,25 +191,26 @@ export class PostHeader extends Component {
               <i>{this.state.reg_date}</i>
             </Typography>
           </Grid>
-          {/*!!!!!!!!!!!!*/}
-          {/*need to check if user is not following this person */}
+
           {/*Follow button */}
-          <Grid item>
-            <Fab
-              color="primary"
-              aria-label="follow"
-              className={classes.follow_button}
-              onChange={this.followUser}
-            >
-              <FriendIcon />
-            </Fab>
-          </Grid>
+          {this.state.is_stranger ? (
+            <Grid item>
+              <Fab
+                color="primary"
+                aria-label="follow"
+                className={classes.follow_button}
+                onClick={this.followUser}
+              >
+                <FriendIcon />
+              </Fab>
+            </Grid>
+          ) : null}
         </Grid>
       </div>
     );
   }
 }
 
-PostHeader.propTypes = { queryUser: PropTypes.string.isRequired };
+PostHeader.propTypes = { queryUser: PropTypes.object.isRequired };
 
 export default withRouter(withStyles(styles)(PostHeader));
