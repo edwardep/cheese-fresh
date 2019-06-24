@@ -4,7 +4,6 @@
  *
  */
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
 import { public_profile } from "../../axios/Get";
@@ -16,8 +15,9 @@ import FriendIcon from "@material-ui/icons/PersonAdd";
 import Button from "@material-ui/core/Button";
 import PopupList from "./postheader/PopupList";
 import Typography from "@material-ui/core/Typography";
-import Dialog from "@material-ui/core/Dialog";
 import { profile_image, follow } from "../../axios/Post";
+import UnfollowIcon from "@material-ui/icons/PersonAddDisabled";
+import { follower } from "../../axios/Delete";
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
@@ -44,7 +44,8 @@ const styles = theme => ({
   modal: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    padding: 20
   }
 });
 /************************************************************************************************/
@@ -104,13 +105,26 @@ export class PostHeader extends Component {
     });
   };
 
-  followUser = event => {
-    console.log("click");
+  followUser = () => {
     const payload = { username: this.state.username };
 
     let response = follow(payload);
     response.then(value => {
       this.setState({ is_stranger: false });
+      this.setState(prevState => ({
+        followers_num: prevState.followers_num + 1
+      }));
+    });
+  };
+
+  unfollowUser = () => {
+    let payload = { username: this.state.username };
+    let response = follower(payload);
+    response.then(value => {
+      this.setState({ is_stranger: true });
+      this.setState(prevState => ({
+        following_num: prevState.following_num - 1
+      }));
     });
   };
 
@@ -153,39 +167,44 @@ export class PostHeader extends Component {
           {/*User name */}
           <Grid item>
             <h2>{this.state.username}</h2>
-            <Button onClick={() => this.setState({ followers_open: true })}>
+
+            {/*Followers modal */}
+            <Button
+              type="submit"
+              onClick={() => this.setState({ followers_open: true })}
+            >
               {this.state.followers_num} Followers
             </Button>
-            <Dialog
-              className={classes.modal}
+
+            <PopupList
+              list={this.state.followers}
+              title={"Your followers: "}
               open={this.state.followers_open}
-              onClose={() =>
-                this.setState({ following_open: false, followers_open: false })
-              }
-            >
-              <PopupList
-                list={this.state.followers}
-                title="You are following: "
-              />
-            </Dialog>
+              onClose={() => {
+                this.setState({ followers_open: false, following_open: false });
+              }}
+            />
             <br />
-            <Button onClick={() => this.setState({ following_open: true })}>
+
+            {/*Following modal */}
+            <Button
+              type="submit"
+              onClick={() => this.setState({ following_open: true })}
+            >
               {this.state.following_num} Following
             </Button>
-
-            <Dialog
-              className={classes.modal}
+            <PopupList
+              list={this.state.following}
+              title={"You are following: "}
               open={this.state.following_open}
-              onClose={() =>
-                this.setState({ following_open: false, followers_open: false })
-              }
-            >
-              <PopupList
-                list={this.state.following}
-                title="You are following: "
-              />
-            </Dialog>
+              onClose={() => {
+                this.setState({ followers_open: false, following_open: false });
+              }}
+            />
+
             <br />
+
+            {/*Registration date */}
             <Typography variant="subtitle2">
               Member since: <br />
               <i>{this.state.reg_date}</i>
@@ -205,6 +224,21 @@ export class PostHeader extends Component {
               </Fab>
             </Grid>
           ) : null}
+
+          {/*UnFollow button */}
+          {this.state.is_stranger === false &&
+          this.state.my_profile === false ? (
+            <Grid item>
+              <Fab
+                color="primary"
+                aria-label="unfollow"
+                className={classes.follow_button}
+                onClick={this.unfollowUser}
+              >
+                <UnfollowIcon />
+              </Fab>
+            </Grid>
+          ) : null}
         </Grid>
       </div>
     );
@@ -213,4 +247,4 @@ export class PostHeader extends Component {
 
 PostHeader.propTypes = { queryUser: PropTypes.object.isRequired };
 
-export default withRouter(withStyles(styles)(PostHeader));
+export default withStyles(styles)(PostHeader);

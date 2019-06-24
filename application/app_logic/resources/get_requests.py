@@ -62,6 +62,7 @@ class GetPublicProfile(Resource):
             follower = User.objects(username=following_username).first()
             if following_username in me.following:
                 follow.in_common = True
+
             if following_username != current_user and following_username != user_name:
                 follow.username = following_username
                 follow.profile_image = follower.profile_image
@@ -73,6 +74,7 @@ class GetPublicProfile(Resource):
             follower = User.objects(username=follower_username).first()
             if follower_username in me.following:
                 follow.in_common = True
+
             if follower_username != current_user and follower_username != user_name:
                 follow.username = follower_username
                 follow.profile_image = follower.profile_image
@@ -83,10 +85,10 @@ class GetPublicProfile(Resource):
         this_path = ''
         if len(active_nodes) > 0 and image:
             if zk_app.exists('/storage/'+str(image.storage[0][1])):
-                this_path = 'http://localhost:100' + \
+                this_path = 'http://192.168.1.141:100' + \
                     str(image.storage[0][1]) + '/' + image.path
             elif zk_app.exists('/storage/'+str(image.storage[1][1])):
-                this_path = 'http://localhost:100' + \
+                this_path = 'http://192.168.1.141:100' + \
                     str(image.storage[1][1]) + '/' + image.path
 
         output = {
@@ -100,7 +102,7 @@ class GetPublicProfile(Resource):
             'following_num': len(user.following),
             'profile_image': this_path
         }
-        return make_response(jsonify(output), 200)
+        return make_response(jsonify({'username': user.username}), 200)
 
 
 '''

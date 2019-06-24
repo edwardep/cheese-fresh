@@ -68,7 +68,7 @@ build_tests: clear_cache				## Build all testing containers
 
 ##@ Run Mode
 dev: clear_cache			## docker-compose up --build
-	$(DC) $(DEV_YML) up --build
+	$(DC) $(DEV_YML) up
 
 
 

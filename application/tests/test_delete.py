@@ -74,15 +74,17 @@ def test_delete_follower_success(client, utility):
     utility.mock_user('john')
     utility.mock_follow('user', 'john')
 
-    url = '/delete_follower?username=john'
-    response = client.delete(url, headers=utility.mock_token())
+    url = '/delete_follower'
+    data = {'username': 'john'}
+    response = client.delete(url, json=data, headers=utility.mock_token())
 
     assert response.status_code == 204
 
 def test_delete_follower_forbidden(client, utility):
     utility.mock_user('user')
 
-    url = '/delete_follower?username=user123123'
-    response = client.delete(url, headers=utility.mock_token())
+    url = '/delete_follower'
+    data = {'username': 'user121231'}
+    response = client.delete(url,json=data, headers=utility.mock_token())
 
     assert response.status_code == 403

@@ -10,10 +10,12 @@ def test_get_profile_success(client, utility):
     response = client.get(url, headers=utility.mock_token())
 
     assert response.status_code == 200
-    assert response.json['username'] == 'john'
+
+    res_data = response.json()
+    assert res_data["username"] == "john"
 
     # not following John yet ~UI: render Follow btn
-    assert response.json['is_stranger'] == True
+    assert res_data['is_stranger'] == True
 
 
 def test_get_profile_not_found(client, utility):

@@ -86,7 +86,7 @@ class DeleteFollower(Resource):
     def delete(self):
         current_user = get_jwt_identity()
         me = User.objects(username=current_user).first()
-        unfollow = request.args.get('username')
+        unfollow = request.json['username']
         if unfollow not in me.following:
             return make_response(jsonify("You are not following this user"), 403)
         me.following.remove(unfollow)

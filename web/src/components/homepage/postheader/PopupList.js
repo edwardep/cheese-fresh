@@ -10,12 +10,13 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemText from "@material-ui/core/ListItemText";
-import Paper from "@material-ui/core/Paper";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import PersonIcon from "@material-ui/icons/Person";
 import AddIcon from "@material-ui/icons/AccountCircleOutlined";
 import CheckCircle from "@material-ui/icons/CheckCircleOutline";
 import { withRouter } from "react-router-dom";
 import blue from "@material-ui/core/colors/blue";
+import Dialog from "@material-ui/core/Dialog";
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = {
@@ -29,24 +30,40 @@ const styles = {
 export class PopupList extends Component {
   /************************************************************************************************/
   /* FUNCTIONS */
-  handleListItemClick = value => {
-    this.props.history.push("/homepage?username=" + value);
-    //window.location.reload();
+  handleClose = () => {
+    this.props.onClose(this.props.selectedValue);
+  };
+
+  handleListItemClick = user => {
+    this.props.history.push("/homepage?username=" + user);
+    window.location.reload();
   };
   /************************************************************************************************/
   render() {
-    const { classes, list, title } = this.props;
+    const {
+      classes,
+      list,
+      title,
+      onClose,
+      staticContext,
+      ...other
+    } = this.props;
 
     return (
-      <div>
-        <Paper>
+      <Dialog
+        className={classes.modal}
+        onClose={this.handleClose}
+        aria-labelledby="simple-dialog-title"
+        {...other}
+      >
+        <DialogTitle id="simple-dialog-title">{title}</DialogTitle>
+        <div>
           <List>
-            <h4>{title} </h4>
             {list.map(user => (
               <ListItem
                 button
-                onClick={this.handleListItemClick(user.username)}
-                key={user}
+                onClick={() => this.handleListItemClick(user.username)}
+                key={user.username}
               >
                 <ListItemAvatar>
                   <Avatar className={classes.avatar}>
@@ -60,8 +77,8 @@ export class PopupList extends Component {
               </ListItem>
             ))}
           </List>
-        </Paper>
-      </div>
+        </div>
+      </Dialog>
     );
   }
 }
