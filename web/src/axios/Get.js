@@ -49,9 +49,16 @@ export async function galleries(query) {
   };
   let res = {};
 
-  await axios.get(apiBaseUrl, headers).then(function(response) {
-    res = response.data;
-  });
+  await axios
+    .get(apiBaseUrl, headers)
+    .then(function(response) {
+      res = response.data;
+    })
+    .catch(error => {
+      if (error.response.status === 403) {
+        res = null;
+      }
+    });
   return res;
 }
 

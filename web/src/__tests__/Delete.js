@@ -31,7 +31,8 @@ it("delete gallery", async () => {
   // setup
   mockAxios.delete.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 200
+      status: 200,
+      data: { data: "data" }
     })
   );
 
@@ -40,7 +41,7 @@ it("delete gallery", async () => {
   let cred = await gallery(payload);
 
   // expect
-  expect(cred).toBeTruthy();
+  expect(cred).toBeDefined();
   expect(mockAxios.delete).toHaveBeenCalledWith(
     "http://127.0.0.1:4000/delete_gallery",
     {

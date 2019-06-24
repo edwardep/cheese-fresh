@@ -40,7 +40,8 @@ it("post gallery", async () => {
   // setup
   mockAxios.post.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 201
+      status: 201,
+      data: { data: "data" }
     })
   );
 
@@ -49,7 +50,7 @@ it("post gallery", async () => {
   let cred = await gallery(payload);
 
   // expect
-  expect(cred).toBeTruthy();
+  expect(cred).toBeDefined();
   expect(mockAxios.post).toHaveBeenCalledWith(
     "http://127.0.0.1:4000/follow",
     payload,

@@ -27,7 +27,7 @@ export async function image(payload) {
 
 export async function gallery(payload) {
   var apiBaseUrl = process.env.REACT_APP_APP + "/delete_gallery";
-  let res = false;
+  let res = {};
   var data = {
     data: payload,
     headers: {
@@ -39,12 +39,12 @@ export async function gallery(payload) {
     .delete(apiBaseUrl, data)
     .then(response => {
       if (response.status === 200) {
-        res = true;
+        res = response.data;
       }
     })
     .catch(error => {
       if (error.response.status >= 400) {
-        res = false;
+        res = null;
       }
     });
   return res;

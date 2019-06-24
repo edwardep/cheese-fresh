@@ -115,6 +115,7 @@ class GetGalleries(Resource):
     @jwt_required
     def get(self):
         my_profile = False
+        is_stranger = False
         user_name = request.args.get('username')
         current_user = get_jwt_identity()
         galleries = []
@@ -127,8 +128,10 @@ class GetGalleries(Resource):
 
         if current_user == user_name:
             my_profile = True
+        if current_user != user_name and user_name not in me.following:
+            is_stranger = True
 
-        output = {'galleries': galleries, 'my_profile': my_profile}
+        output = {'galleries': galleries, 'my_profile': my_profile, 'is_stranger': is_stranger}
         return make_response(jsonify(output), 200)
 
 

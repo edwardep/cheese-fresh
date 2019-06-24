@@ -5,7 +5,7 @@
  */
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Paper from "@material-ui/core/Paper";
+import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
@@ -16,6 +16,14 @@ import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/DeleteForever";
 import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
+import { galleries as get_galleries } from "../../axios/Get";
+import { gallery as add_gallery } from "../../axios/Post";
+import { gallery as delete_gallery } from "../../axios/Delete";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import TextField from "@material-ui/core/TextField";
 
 function TabContainer(props) {
   return (
@@ -28,7 +36,7 @@ function TabContainer(props) {
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
-  tabs: {
+  root: {
     marginTop: 20,
     marginLeft: "80px",
     marginRight: "80px"
@@ -43,40 +51,117 @@ export class MainBody extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      galleries: ["Fish", "Dogs", "Trees", "Cats"],
-      my_profile: true,
-      index: 0
+      galleries: [],
+      my_profile: null,
+      is_stranger: null,
+      index: 0,
+      open_cg: false,
+      new_gallery_title: ""
     };
   }
   /************************************************************************************************/
   /* FUNCTIONS */
+  componentDidMount = () => {
+    const queryUser = this.props.queryUser;
+
+    let response = get_galleries(queryUser);
+
+    response.then(value => {
+      if (value === null) {
+        this.setState({
+          error: "This account is private.Follow this user first."
+        });
+      } else {
+        this.setState({
+          galleries: value.galleries,
+          my_profile: value.my_profile,
+          is_stranger: value.is_stranger
+        });
+      }
+    });
+  };
 
   selectGallery = (event, value) => {
     this.setState({ index: value });
+  };
+
+  createGallery = event => {
+    event.preventDefault();
+    const payload = { gallery_title: this.state.new_gallery_title };
+    let response = add_gallery(payload);
+    response.then(value => {
+      this.setState({ open_cg: false, galleries: value.galleries });
+    });
+  };
+
+  deleteGallery = () => {
+    const payload = { gallery_title: this.state.galleries[this.state.index] };
+    let response = delete_gallery(payload);
+    response.then(value => {
+      this.setState({ galleries: value.galleries });
+    });
   };
 
   /************************************************************************************************/
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.tabs}>
-        <Paper>
+      <div className={classes.root}>
+        <AppBar position="static" color="default">
           <Grid container justify="space-between" alignItems="center">
-            {/*Create new gallery button*/}
             <Grid item>
-              <Button
-                variant="text"
-                color="primary"
-                className={classes.button}
-                onClick={this.openCreateGallery}
-              >
-                <AddGalleryIcon className={classes.addGalIcon} />
-                Create
-              </Button>
+              {/*Create new gallery button*/}
+              {this.state.my_profile ? (
+                <Button
+                  variant="text"
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => {
+                    this.setState({ open_cg: true });
+                  }}
+                >
+                  <AddGalleryIcon className={classes.addGalIcon} />
+                  Create
+                </Button>
+              ) : null}
             </Grid>
+            <Dialog
+              open={this.state.open_cg}
+              onClose={() => {
+                this.setState({ open_cg: false });
+              }}
+              aria-labelledby="form-dialog-title"
+            >
+              <DialogTitle id="form-dialog-title">
+                Creating new Gallery
+              </DialogTitle>
+              <DialogContent>
+                <TextField
+                  autoFocus
+                  id="gallery_title"
+                  label="Title"
+                  type="text"
+                  inputProps={{ maxLength: 10 }}
+                  required
+                  fullWidth
+                  onChange={event =>
+                    this.setState({ new_gallery_title: event.target.value })
+                  }
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  type="submit"
+                  onClick={event => this.createGallery(event)}
+                  color="primary"
+                >
+                  Create
+                </Button>
+              </DialogActions>
+            </Dialog>
 
             {/*Gallery name tags */}
-            <Grid item>
+            <Grid item xs={8}>
               <Tabs
                 value={this.state.index}
                 /*!!!!!!!!!!!!!!!!!!!! function selectGallery()*/
@@ -92,17 +177,19 @@ export class MainBody extends Component {
             </Grid>
 
             {/*Delete a gallery button*/}
-            <Grid item>
-              <IconButton
-                className={classes.button}
-                /*!!!!!!!!!!!!!!!!!!!! function deleteGallery()*/
-                onClick={this.deleteIcon}
-              >
-                <DeleteIcon className={classes.buttonIcon} />
-              </IconButton>
-            </Grid>
+            {this.state.my_profile ? (
+              <Grid item>
+                <IconButton
+                  className={classes.button}
+                  onClick={this.deleteGallery}
+                >
+                  <DeleteIcon className={classes.buttonIcon} />
+                </IconButton>
+              </Grid>
+            ) : null}
           </Grid>
-        </Paper>
+        </AppBar>
+
         <TabContainer>
           <Gallery
           // images={this.state.images}

@@ -143,7 +143,7 @@ class AddGallery(Resource):
         current_user = get_jwt_identity()
         gallery = Gallery()
         title = request.json['gallery_title']
-
+        list_galleries = []
         if not title or title == '':
             title = "Gallery"
 
@@ -151,6 +151,7 @@ class AddGallery(Resource):
         len_title = len(title)
 
         for emb_gallery in user.galleries:
+            list_galleries.append(emb_gallery.title)
             if emb_gallery.title == title and len(emb_gallery.title) == len_title:
                 title = title + '(1)'
             elif emb_gallery.title[-3] == "(" and emb_gallery.title[
@@ -164,7 +165,8 @@ class AddGallery(Resource):
         gallery.owner = current_user
         user.galleries.insert(0, gallery)
         user.save()
-        return make_response(jsonify("OK"), 201)
+        output = { 'galleries': list_galleries}
+        return make_response(jsonify(output), 201)
 
 # Used to add pictures in a gallery/ needs storage service to be successful
 

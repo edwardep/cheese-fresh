@@ -54,6 +54,8 @@ class DeleteGallery(Resource):
         current_user = get_jwt_identity()
         me = User.objects(username=current_user).first()
         gallery_title = request.json['gallery_title']
+        list_galleries = []
+
         try:
             gallery = me.galleries.get(title=gallery_title)
             me.galleries.remove(gallery)
@@ -61,7 +63,10 @@ class DeleteGallery(Resource):
         except:
             return make_response(jsonify("Gallery doen't exists"), 404)
 
-        return make_response(jsonify("Deleted"), 200)
+        for each_gallery in me.galleries:
+            list_galleries.append(each_gallery.title)
+        output = {'galleries': list_galleries}
+        return make_response(jsonify(output), 200)
 
 
 # Delete comment by id-->returns 204 or 403

@@ -18,6 +18,8 @@ import Typography from "@material-ui/core/Typography";
 import { profile_image, follow } from "../../axios/Post";
 import UnfollowIcon from "@material-ui/icons/PersonAddDisabled";
 import { follower } from "../../axios/Delete";
+import LockIcon from "@material-ui/icons/Lock";
+import MainBody from "./MainBody";
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
@@ -46,7 +48,14 @@ const styles = theme => ({
     alignItems: "center",
     justifyContent: "center",
     padding: 20
-  }
+  },
+  errorMsg: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 80
+  },
+  lockicon: { marginRight: "10px", width: "50px", height: "50px" }
 });
 /************************************************************************************************/
 export class PostHeader extends Component {
@@ -64,7 +73,8 @@ export class PostHeader extends Component {
       reg_date: null,
       profileImage: null,
       following_open: false,
-      followers_open: false
+      followers_open: false,
+      error: ""
     };
   }
   /************************************************************************************************/
@@ -84,8 +94,9 @@ export class PostHeader extends Component {
         following: value.following,
         followers_num: value.followers_num,
         following_num: value.following_num,
-        reg_date: value.reg_date,
-        profileImage: value.profile_image
+        reg_date: value.reg_date.toString().slice(5, 16),
+        profileImage: value.profile_image,
+        error: "This account is private.Follow this user first."
       });
     });
   };
@@ -245,6 +256,16 @@ export class PostHeader extends Component {
             </Grid>
           ) : null}
         </Grid>
+
+        {this.state.is_stranger ? (
+          /*Private account message, if user is not following this person */
+          <div className={classes.errorMsg}>
+            <LockIcon className={classes.lockicon} />
+            <h3>{this.state.error}</h3>
+          </div>
+        ) : (
+          <MainBody queryUser={this.props.queryUser} />
+        )}
       </div>
     );
   }
