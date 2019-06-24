@@ -170,10 +170,10 @@ class GalleryPhotos(Resource):
                 continue
             else:
                 if zk_app.exists('/storage/'+str(image.storage[0][1])):
-                    this_path = image.storage[0][0] + \
+                    this_path = "http://192.168.1.141:100" + \
                         str(image.storage[0][1]) + '/' + image.path
                 elif zk_app.exists('/storage/'+str(image.storage[1][1])):
-                    this_path = image.storage[1][0] + \
+                    this_path = "http://192.168.1.141:100" + \
                         str(image.storage[1][1]) + '/' + image.path
                 else:
                     continue

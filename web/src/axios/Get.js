@@ -90,8 +90,15 @@ export async function images(query) {
   };
   let res = {};
 
-  await axios.get(apiBaseUrl, headers).then(function(response) {
-    res = response.data;
-  });
+  await axios
+    .get(apiBaseUrl, headers)
+    .then(function(response) {
+      res = response.data;
+    })
+    .catch(error => {
+      if (error.response.status >= 400) {
+        res = null;
+      }
+    });
   return res;
 }

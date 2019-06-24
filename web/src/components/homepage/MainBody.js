@@ -87,7 +87,9 @@ export class MainBody extends Component {
 
   createGallery = event => {
     event.preventDefault();
+
     const payload = { gallery_title: this.state.new_gallery_title };
+
     let response = add_gallery(payload);
     response.then(value => {
       this.setState({ open_cg: false, galleries: value.galleries });
@@ -164,7 +166,6 @@ export class MainBody extends Component {
             <Grid item xs={8}>
               <Tabs
                 value={this.state.index}
-                /*!!!!!!!!!!!!!!!!!!!! function selectGallery()*/
                 onChange={this.selectGallery}
                 variant="scrollable"
                 scrollButtons="auto"
@@ -189,13 +190,17 @@ export class MainBody extends Component {
             ) : null}
           </Grid>
         </AppBar>
+        {console.log("33", this.state.galleries[this.state.index])}
 
         <TabContainer>
-          <Gallery
-          // images={this.state.images}
-          // my_profile={my_profile}
-          // gallery_title={queryGalleries[this.state.value]}
-          />
+          {this.state.galleries[this.state.index] ? (
+            <Gallery
+              queryUser={this.props.queryUser}
+              my_profile={this.state.my_profile}
+              gallery_title={this.state.galleries[this.state.index]}
+              gallery_num={this.state.galleries.length}
+            />
+          ) : null}
         </TabContainer>
       </div>
     );

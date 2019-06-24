@@ -15,6 +15,8 @@ import IconButton from "@material-ui/core/IconButton";
 import { GridListTileBar } from "@material-ui/core";
 import Modal from "@material-ui/core/Modal";
 import PropTypes from "prop-types";
+import { image as add_image } from "../../../axios/Post";
+import { images } from "../../../axios/Get";
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
@@ -40,49 +42,43 @@ export class Gallery extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      images: [
-        {
-          id: 1,
-          url: "https://s3.us-east-2.amazonaws.com/dzuz14/thumbnails/aurora.jpg"
-        },
-        {
-          id: 2,
-          url: "https://s3.us-east-2.amazonaws.com/dzuz14/thumbnails/canyon.jpg"
-        },
-        {
-          id: 3,
-          url: "https://s3.us-east-2.amazonaws.com/dzuz14/thumbnails/city.jpg"
-        },
-        {
-          url: "https://s3.us-east-2.amazonaws.com/dzuz14/thumbnails/desert.jpg"
-        },
-        {
-          id: 4,
-          url:
-            "https://s3.us-east-2.amazonaws.com/dzuz14/thumbnails/mountains.jpg"
-        },
-        {
-          id: 5,
-          url: "https://s3.us-east-2.amazonaws.com/dzuz14/thumbnails/redsky.jpg"
-        },
-        {
-          id: 6,
-          url:
-            "https://s3.us-east-2.amazonaws.com/dzuz14/thumbnails/sandy-shores.jpg"
-        },
-        {
-          id: 7,
-          url:
-            "https://s3.us-east-2.amazonaws.com/dzuz14/thumbnails/tree-of-life.jpg"
-        }
-      ],
+      images: [],
       open: false,
-      slide: null
+      slide: null,
+      my_profile: null
     };
   }
   /************************************************************************************************/
   /* FUNCTIONS */
+  componentDidMount = () => {
+    this.setState({ gallery_title: this.props.gallery_title });
+    this.getImages();
+  };
 
+  getImages = () => {
+    const query = {
+      username: this.props.queryUser["username"],
+      gallery_title: this.props.gallery_title
+    };
+    let response = images(query);
+    response.then(value_res => {
+      this.setState({ images: value_res });
+    });
+  };
+
+  addNewImage = event => {
+    let data = new FormData();
+    data.append("file", event.target.files[0]);
+
+    const query = { gallery_title: this.props.gallery_title };
+    let response = add_image(data, query);
+
+    response.then(value => {
+      const temp_images = this.state.images;
+      temp_images.unshift(value);
+      this.setState({ images: temp_images });
+    });
+  };
   /************************************************************************************************/
   render() {
     const { classes } = this.props;
@@ -92,34 +88,41 @@ export class Gallery extends Component {
           {/*!!!!!!!!!!!!*/}
           {/*need to check if user is looking his own profile */}
           {/* Create a new gallery button.*/}
-          <GridListTile key={"000"}>
-            <div>
-              <label htmlFor="upload-file" className={classes.button_container}>
-                <input
-                  id="upload-file"
-                  type="file"
-                  name="file"
-                  /*!!!!!!!!!!!!!!!!!!!! function addNewImage()*/
-                  onChange={this.addNewImage}
-                  className={classes.input}
-                />
-                <Button
-                  component="span"
-                  type="submit"
-                  className={classes.upload_button}
-                  fullWidth
+          {this.props.my_profile === false ||
+          this.props.gallery_num === 0 ? null : (
+            <GridListTile key={"000"}>
+              <div>
+                <label
+                  htmlFor="upload-file"
+                  className={classes.button_container}
                 >
-                  <AddPhotoIcon style={{ fontSize: 90 }} />
-                </Button>
-              </label>
-            </div>
-          </GridListTile>
+                  <input
+                    id="upload-file"
+                    type="file"
+                    name="file"
+                    /*!!!!!!!!!!!!!!!!!!!! function addNewImage()*/
+                    onChange={this.addNewImage}
+                    className={classes.input}
+                  />
+                  <Button
+                    component="span"
+                    type="submit"
+                    className={classes.upload_button}
+                    fullWidth
+                  >
+                    <AddPhotoIcon style={{ fontSize: 90 }} />
+                  </Button>
+                </label>
+              </div>
+            </GridListTile>
+          )}
+
           {/* Show all images of gallery in a grid.*/}
           {this.state.images.map(tile => (
-            <GridListTile key={tile.url}>
+            <GridListTile key={tile.path}>
               <img
-                src={tile.url}
-                alt={tile.url}
+                src={tile.path}
+                alt={tile.path}
                 onClick={() => {
                   this.setState({ open: true, slide: tile });
                 }}
@@ -131,7 +134,7 @@ export class Gallery extends Component {
                 className={classes.clearTile}
                 actionIcon={
                   /*!!!!!!!!!!!!!!!!!!!! function deleteImage()*/
-                  <IconButton onClick={() => this.deleteImage(tile.id)}>
+                  <IconButton onClick={() => this.deleteImage(tile.path)}>
                     <ClearBtn className={classes.clearBtn} />
                   </IconButton>
                 }
@@ -155,6 +158,9 @@ export class Gallery extends Component {
   }
 }
 
-Gallery.propTypes = { images: PropTypes.array, my_profile: PropTypes.object };
+Gallery.propTypes = {
+  images: PropTypes.array,
+  my_profile: PropTypes.bool
+};
 
 export default withStyles(styles)(Gallery);

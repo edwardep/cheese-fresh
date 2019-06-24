@@ -93,7 +93,8 @@ it("post image", async () => {
   // setup
   mockAxios.post.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 201
+      status: 201,
+      data: { data: "data" }
     })
   );
 
@@ -103,7 +104,7 @@ it("post image", async () => {
   let cred = await image(payload, query);
 
   // expect
-  expect(cred).toBeTruthy();
+  expect(cred).toBeDefined();
   expect(mockAxios.post).toHaveBeenCalledWith(
     "http://127.0.0.1:4000/add_image",
     payload,

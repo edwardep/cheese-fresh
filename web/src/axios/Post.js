@@ -114,7 +114,7 @@ export async function comment(payload) {
 
 export async function image(payload, query) {
   var apiBaseUrl = process.env.REACT_APP_APP + "/add_image";
-  let res = false;
+  let res = {};
   var headers = {
     params: query,
     headers: {
@@ -126,12 +126,12 @@ export async function image(payload, query) {
     .post(apiBaseUrl, payload, headers)
     .then(response => {
       if (response.status === 201) {
-        res = true;
+        res = response.data;
       }
     })
     .catch(error => {
       if (error.response.status > 300) {
-        res = false;
+        res = null;
       }
     });
   return res;

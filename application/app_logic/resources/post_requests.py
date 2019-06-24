@@ -149,7 +149,7 @@ class AddGallery(Resource):
 
         user = User.objects(username=current_user).first()
         len_title = len(title)
-
+        
         for emb_gallery in user.galleries:
             list_galleries.append(emb_gallery.title)
             if emb_gallery.title == title and len(emb_gallery.title) == len_title:
@@ -161,6 +161,7 @@ class AddGallery(Resource):
                 s[-2] = str(i)
                 title = "".join(s)
 
+        list_galleries.insert(0, title)
         gallery.title = title
         gallery.owner = current_user
         user.galleries.insert(0, gallery)
@@ -233,7 +234,14 @@ class AddImage(Resource):
                 selected_storage_2[0] + selected_storage_2[1] + '/post_image', files=sendFile)
             
             path = 'http://192.168.1.141:100'+rand_storage[0]+'/'+filename
-            output = {'image': path}
+            output = {
+                'id': image.iid,
+                'path': path,
+                'owner': image.owner,
+                'reg_date': image.registered_date,
+                'description': image.description,
+                'comments': image.comments
+            }
             return make_response(jsonify(output), 201)
         except:
             return make_response(jsonify({'path': 'storage_error'}), 500)
