@@ -107,24 +107,29 @@ export class PostHeader extends Component {
 
   followUser = () => {
     const payload = { username: this.state.username };
-
     let response = follow(payload);
+
     response.then(value => {
-      this.setState({ is_stranger: false });
-      this.setState(prevState => ({
-        followers_num: prevState.followers_num + 1
-      }));
+      if (value !== null) {
+        this.setState({
+          is_stranger: false,
+          followers_num: value.followers_num
+        });
+      }
     });
   };
 
   unfollowUser = () => {
-    let payload = { username: this.state.username };
+    const payload = { username: this.state.username };
     let response = follower(payload);
+
     response.then(value => {
-      this.setState({ is_stranger: true });
-      this.setState(prevState => ({
-        following_num: prevState.following_num - 1
-      }));
+      if (value !== null) {
+        this.setState({
+          is_stranger: true,
+          followers_num: value.followers_num
+        });
+      }
     });
   };
 

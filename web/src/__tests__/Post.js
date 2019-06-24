@@ -9,57 +9,12 @@ import {
   profile_image
 } from "../axios/Post";
 
-it("post register", async () => {
-  // setup
-  mockAxios.post.mockImplementationOnce(() =>
-    Promise.resolve({
-      status: 201
-    })
-  );
-
-  // work
-  let payload;
-  let cred = await register(payload);
-
-  // expect
-  expect(cred).toBeTruthy();
-  expect(mockAxios.post).toHaveBeenCalledWith(
-    "http://127.0.0.1:4000/register",
-    payload,
-    {
-      withCredentials: true
-    }
-  );
-});
-
-it("post login", async () => {
-  // setup
-  mockAxios.post.mockImplementationOnce(() =>
-    Promise.resolve({
-      status: 200
-    })
-  );
-
-  // work
-  let payload;
-  let cred = await login(payload);
-
-  // expect
-  expect(cred).toBeTruthy();
-  expect(mockAxios.post).toHaveBeenCalledWith(
-    "http://127.0.0.1:4000/login",
-    payload,
-    {
-      withCredentials: true
-    }
-  );
-});
-
 it("post follow", async () => {
   // setup
   mockAxios.post.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 201
+      status: 201,
+      data: { data: "data" }
     })
   );
 
@@ -68,7 +23,7 @@ it("post follow", async () => {
   let cred = await follow(payload);
 
   // expect
-  expect(cred).toBeTruthy();
+  expect(cred).toBeDefined();
   expect(mockAxios.post).toHaveBeenCalledWith(
     "http://127.0.0.1:4000/follow",
     payload,
@@ -165,7 +120,8 @@ it("post profile_image", async () => {
   // setup
   mockAxios.post.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 201
+      status: 201,
+      data: { data: "data" }
     })
   );
 
@@ -176,7 +132,7 @@ it("post profile_image", async () => {
   // expect
 
   // Fail this test, backend not tested
-  expect(cred).toBeTruthy();
+  expect(cred).toBeDefined();
   expect(mockAxios.post).toHaveBeenCalledWith(
     "http://127.0.0.1:4000/profile_picture",
     payload,

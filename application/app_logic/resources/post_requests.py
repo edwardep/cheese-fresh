@@ -123,7 +123,7 @@ class Follow(Resource):
             return make_response("BAD", 404)
         me = User.objects(username=current_user).first()
         # make sure its not me or its not already in my following list
-        if to_follow in me.following or to_follow == current_user:
+        if to_follow in me.following or current_user in friend.followers or to_follow == current_user:
             output = jsonify("You can't follow this user")
             return make_response(output, 406)  # 406 not accepted
 
@@ -131,7 +131,8 @@ class Follow(Resource):
         friend.save()
         me.following.append(to_follow)
         me.save()
-        return make_response(jsonify('DONE'), 201)
+        output = {'followers_num': len(friend.followers)}
+        return make_response(jsonify(output), 201)
 
 # Used to create a new gallery / returns--> gallery info
 

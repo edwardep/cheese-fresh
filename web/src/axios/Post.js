@@ -28,7 +28,6 @@ export async function login(payload) {
     .then(response => {
       if (response.status === 200) {
         localStorage.setItem("jwt_token", response.headers["authorization"]);
-        //localStorage.setItem("jwt_token", 1111111);
         res = true;
       }
     })
@@ -42,7 +41,7 @@ export async function login(payload) {
 
 export async function follow(payload) {
   var apiBaseUrl = process.env.REACT_APP_APP + "/follow";
-  let res = false;
+  let res = {};
   var headers = {
     headers: {
       Authorization: "Bearer " + localStorage.getItem("jwt_token"),
@@ -54,12 +53,12 @@ export async function follow(payload) {
     .then(response => {
       if (response.status === 201) {
         // Succesfull, render user's gallery
-        res = true;
+        res = response.data;
       }
     })
     .catch(error => {
       if (error.response.status > 300) {
-        res = false;
+        res = null;
       }
     });
   return res;

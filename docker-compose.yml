@@ -121,9 +121,9 @@ services:
   mongodb:
     image: 'mongo:latest'
     environment:
-      - MONGO_DATA_DIR=/data/db
+      - MONGO_DATA_DIR=/run-data/db
     volumes:
-      - ./run_data/db:/data/db
+      - ./run_data/db:/run-data/db
     command: mongod --smallfiles #--quiet
     logging:
       driver: none

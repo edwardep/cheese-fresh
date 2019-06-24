@@ -5,7 +5,7 @@ it("delete image", async () => {
   // setup
   mockAxios.delete.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 204
+      status: 200
     })
   );
 
@@ -31,7 +31,7 @@ it("delete gallery", async () => {
   // setup
   mockAxios.delete.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 204
+      status: 200
     })
   );
 
@@ -57,7 +57,7 @@ it("delete comment", async () => {
   // setup
   mockAxios.delete.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 204
+      status: 200
     })
   );
 
@@ -83,7 +83,8 @@ it("delete follower", async () => {
   // setup
   mockAxios.delete.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 204
+      status: 200,
+      data: { data: "data" }
     })
   );
 
@@ -92,7 +93,7 @@ it("delete follower", async () => {
   let cred = await follower(payload);
 
   // expect
-  expect(cred).toBeTruthy();
+  expect(cred).toBeDefined();
   expect(mockAxios.delete).toHaveBeenCalledWith(
     "http://127.0.0.1:4000/delete_follower",
     {

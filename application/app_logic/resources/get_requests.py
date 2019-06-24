@@ -102,7 +102,7 @@ class GetPublicProfile(Resource):
             'following_num': len(user.following),
             'profile_image': this_path
         }
-        return make_response(jsonify({'username': user.username}), 200)
+        return make_response(jsonify(output), 200)
 
 
 '''

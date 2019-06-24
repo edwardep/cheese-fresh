@@ -40,7 +40,7 @@ class DeleteImage(Resource):
             try:
                 requests.delete(STORAGE_HOST[0] + '/delete_image', json=data)
                 image.delete()
-                return make_response(jsonify('OK'), 204)
+                return make_response(jsonify('OK'), 200)
             except:
                 return make_response(jsonify('storage_down'), 500)
             
@@ -61,7 +61,7 @@ class DeleteGallery(Resource):
         except:
             return make_response(jsonify("Gallery doen't exists"), 404)
 
-        return make_response(jsonify("Deleted"), 204)
+        return make_response(jsonify("Deleted"), 200)
 
 
 # Delete comment by id-->returns 204 or 403
@@ -77,7 +77,7 @@ class DeleteComment(Resource):
         comment = image.comments.get(_id=comment_id)
         image.comments.remove(comment)
         image.save()
-        return make_response(jsonify('OK'), 204)
+        return make_response(jsonify('OK'), 200)
 
 
 # delete follower --> returns 403 or 204
@@ -89,6 +89,16 @@ class DeleteFollower(Resource):
         unfollow = request.json['username']
         if unfollow not in me.following:
             return make_response(jsonify("You are not following this user"), 403)
+        
+        friend = User.objects(username=unfollow).first()
+        if friend is None:
+            return make_response(jsonify('user not found'), 404)
+
+        friend.followers.remove(current_user)
+        friend.save()
         me.following.remove(unfollow)
         me.save()
-        return make_response(jsonify("Deleted"), 204)
+
+        output = {'followers_num': len(friend.followers)}
+        
+        return make_response(jsonify(output), 200)

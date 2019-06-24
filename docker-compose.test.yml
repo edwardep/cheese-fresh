@@ -9,9 +9,8 @@ services:
       - '/app/node_modules'
     environment:
       - REACT_APP_AUTH=http://127.0.0.1:4000
+      - REACT_APP_APP=http://127.0.0.1:4000
       - CI=true
-    depends_on:
-      - authentication
   application:
     container_name: app_test
     build:
@@ -109,9 +108,9 @@ services:
   mongodb:
     image: 'mongo:latest'
     environment:
-      - MONGO_DATA_DIR=/data/db
+      - MONGO_DATA_DIR=/test-data/db
     volumes:
-      - ./test-data/db:/data/db
+      - ./test-data/db:/test-data/db
     command: mongod --smallfiles --quiet
     logging:
       driver: none

@@ -32,7 +32,7 @@ def test_delete_gallery_success(client, utility):
     data = {'gallery_title': 'gallery'}
     response = client.delete(url, json=data, headers=utility.mock_token())
 
-    assert response.status_code == 204
+    assert response.status_code == 200
 
 
 def test_delete_gallery_not_found(client, utility):
@@ -56,7 +56,7 @@ def test_delete_comment_success(client, utility):
     data = {'comment_id': cid, 'image_id': iid}
     response = client.delete(url, json=data, headers=utility.mock_token())
 
-    assert response.status_code == 204
+    assert response.status_code == 200
 
 
 def test_delete_comment_not_found(client, utility):
@@ -78,7 +78,7 @@ def test_delete_follower_success(client, utility):
     data = {'username': 'john'}
     response = client.delete(url, json=data, headers=utility.mock_token())
 
-    assert response.status_code == 204
+    assert response.status_code == 200
 
 def test_delete_follower_forbidden(client, utility):
     utility.mock_user('user')

@@ -13,7 +13,7 @@ export async function image(payload) {
   await axios
     .delete(apiBaseUrl, data)
     .then(response => {
-      if (response.status === 204) {
+      if (response.status === 200) {
         res = true;
       }
     })
@@ -38,7 +38,7 @@ export async function gallery(payload) {
   await axios
     .delete(apiBaseUrl, data)
     .then(response => {
-      if (response.status === 204) {
+      if (response.status === 200) {
         res = true;
       }
     })
@@ -63,7 +63,7 @@ export async function comment(payload) {
   await axios
     .delete(apiBaseUrl, data)
     .then(response => {
-      if (response.status === 204) {
+      if (response.status === 200) {
         res = true;
       }
     })
@@ -77,7 +77,7 @@ export async function comment(payload) {
 
 export async function follower(payload) {
   var apiBaseUrl = process.env.REACT_APP_APP + "/delete_follower";
-  let res = false;
+  let res = {};
   var data = {
     data: payload,
     headers: {
@@ -88,13 +88,13 @@ export async function follower(payload) {
   await axios
     .delete(apiBaseUrl, data)
     .then(response => {
-      if (response.status === 204) {
-        res = true;
+      if (response.status === 200) {
+        res = response.data;
       }
     })
     .catch(error => {
       if (error.response.status >= 400) {
-        res = false;
+        res = null;
       }
     });
   return res;
