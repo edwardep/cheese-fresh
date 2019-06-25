@@ -16,7 +16,8 @@ import { GridListTileBar } from "@material-ui/core";
 import Modal from "@material-ui/core/Modal";
 import PropTypes from "prop-types";
 import { image as add_image } from "../../../axios/Post";
-import { images } from "../../../axios/Get";
+import { image as delete_image } from "../../../axios/Delete";
+
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
@@ -44,26 +45,15 @@ export class Gallery extends Component {
     this.state = {
       images: [],
       open: false,
-      slide: null,
+      slide: 0,
       my_profile: null
     };
   }
   /************************************************************************************************/
-  /* FUNCTIONS */
-  componentDidMount = () => {
-    this.setState({ gallery_title: this.props.gallery_title });
-    this.getImages();
-  };
-
-  getImages = () => {
-    const query = {
-      username: this.props.queryUser["username"],
-      gallery_title: this.props.gallery_title
-    };
-    let response = images(query);
-    response.then(value_res => {
-      this.setState({ images: value_res });
-    });
+  componentDidUpdate = prevProps => {
+    if (this.props.images !== prevProps.images) {
+      this.setState({ images: this.props.images });
+    }
   };
 
   addNewImage = event => {
@@ -79,14 +69,25 @@ export class Gallery extends Component {
       this.setState({ images: temp_images });
     });
   };
+
+  deleteImage = (id, index) => {
+    var payload = { image_id: id };
+    let response = delete_image(payload);
+    response.then(value => {
+      if (value) {
+        const temp_images = this.state.images;
+        temp_images.splice(index, 1);
+        this.setState({ images: temp_images });
+      }
+    });
+  };
+
   /************************************************************************************************/
   render() {
     const { classes } = this.props;
     return (
       <div>
         <GridList cellHeight={280} cols={4}>
-          {/*!!!!!!!!!!!!*/}
-          {/*need to check if user is looking his own profile */}
           {/* Create a new gallery button.*/}
           {this.props.my_profile === false ||
           this.props.gallery_num === 0 ? null : (
@@ -100,7 +101,6 @@ export class Gallery extends Component {
                     id="upload-file"
                     type="file"
                     name="file"
-                    /*!!!!!!!!!!!!!!!!!!!! function addNewImage()*/
                     onChange={this.addNewImage}
                     className={classes.input}
                   />
@@ -124,34 +124,42 @@ export class Gallery extends Component {
                 src={tile.path}
                 alt={tile.path}
                 onClick={() => {
-                  this.setState({ open: true, slide: tile });
+                  this.setState({
+                    open: true,
+                    slide: this.state.images.indexOf(tile)
+                  });
                 }}
               />
-              {/*!!!!!!!!!!!!*/}
-              {/*need to check if user is looking his own profile */}
+
               {/*Delete image button*/}
-              <GridListTileBar
-                className={classes.clearTile}
-                actionIcon={
-                  /*!!!!!!!!!!!!!!!!!!!! function deleteImage()*/
-                  <IconButton onClick={() => this.deleteImage(tile.path)}>
-                    <ClearBtn className={classes.clearBtn} />
-                  </IconButton>
-                }
-              />
+              {this.props.my_profile ? (
+                <GridListTileBar
+                  className={classes.clearTile}
+                  actionIcon={
+                    <IconButton
+                      onClick={() =>
+                        this.deleteImage(
+                          tile.id,
+                          this.state.images.indexOf(tile)
+                        )
+                      }
+                    >
+                      <ClearBtn className={classes.clearBtn} />
+                    </IconButton>
+                  }
+                />
+              ) : null}
             </GridListTile>
           ))}
         </GridList>
+
         {/*A slider in order to view each image seperately.*/}
         <Modal
           className={classes.modal}
           open={this.state.open}
           onClose={() => this.setState({ open: false })}
         >
-          <ImageSlider
-            images={this.state.images}
-            index={this.state.images.indexOf(this.state.slide)}
-          />
+          <ImageSlider images={this.state.images} index={this.state.slide} />
         </Modal>
       </div>
     );

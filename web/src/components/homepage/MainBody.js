@@ -19,6 +19,7 @@ import PropTypes from "prop-types";
 import { galleries as get_galleries } from "../../axios/Get";
 import { gallery as add_gallery } from "../../axios/Post";
 import { gallery as delete_gallery } from "../../axios/Delete";
+import { images } from "../../axios/Get";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -51,6 +52,7 @@ export class MainBody extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      images: [],
       galleries: [],
       my_profile: null,
       is_stranger: null,
@@ -77,12 +79,28 @@ export class MainBody extends Component {
           my_profile: value.my_profile,
           is_stranger: value.is_stranger
         });
+        this.getImages(0);
       }
     });
   };
 
   selectGallery = (event, value) => {
     this.setState({ index: value });
+
+    this.getImages(value);
+    return <div />;
+  };
+
+  getImages = value => {
+    const query = {
+      username: this.props.queryUser["username"],
+      gallery_title: this.state.galleries[value]
+    };
+
+    let response = images(query);
+    response.then(value_res => {
+      this.setState({ images: value_res });
+    });
   };
 
   createGallery = event => {
@@ -190,11 +208,11 @@ export class MainBody extends Component {
             ) : null}
           </Grid>
         </AppBar>
-        {console.log("33", this.state.galleries[this.state.index])}
 
         <TabContainer>
           {this.state.galleries[this.state.index] ? (
             <Gallery
+              images={this.state.images}
               queryUser={this.props.queryUser}
               my_profile={this.state.my_profile}
               gallery_title={this.state.galleries[this.state.index]}

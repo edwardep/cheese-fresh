@@ -3,16 +3,14 @@
  *
  *
  */
-
 import React, { Component } from "react";
 import Header from "./homepage/Header";
 import PostHeader from "./homepage/PostHeader";
 import queryString from "query-string";
-
+/************************************************************************************************/
 export class Homepage extends Component {
-  static propTypes = {};
-
   render() {
+    //Get username from url query
     let url = this.props.location.search;
     let params = queryString.parse(url);
     return (

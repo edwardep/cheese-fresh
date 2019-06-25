@@ -90,7 +90,7 @@ export async function gallery(payload) {
 
 export async function comment(payload) {
   var apiBaseUrl = process.env.REACT_APP_APP + "/comment";
-  let res = false;
+  let res = {};
   var headers = {
     headers: {
       Authorization: "Bearer " + localStorage.getItem("jwt_token"),
@@ -101,12 +101,12 @@ export async function comment(payload) {
     .post(apiBaseUrl, payload, headers)
     .then(response => {
       if (response.status === 201) {
-        res = true;
+        res = response.data;
       }
     })
     .catch(error => {
       if (error.response.status > 300) {
-        res = false;
+        res = {};
       }
     });
   return res;

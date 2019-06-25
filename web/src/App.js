@@ -1,3 +1,9 @@
+/*  PARENT COMPONENT: no
+ *  DESCRIPTION: The root component wirch calls every other component.
+ *
+ *
+ */
+
 import React, { Component } from "react";
 import Homepage from "./components/Homepage";
 import Login from "./components/Login";

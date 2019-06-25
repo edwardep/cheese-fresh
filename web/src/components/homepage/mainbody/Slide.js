@@ -15,6 +15,9 @@ import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import PropTypes from "prop-types";
+import { comment as del_comment } from "../../../axios/Delete";
+import { comment as add_comment } from "../../../axios/Post";
+import { comments } from "../../../axios/Get";
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
@@ -32,18 +35,31 @@ export class Slide extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      comments: [
-        {
-          id: 1,
-          author: "Alice",
-          text: "Asdsfh dsssgaak skskskska llwwkjrhhwialgh ,dnjhhh eewihohjhd."
-        },
-        { id: 2, author: "Bob", text: "Akkksjah skskksja." }
-      ]
+      comments: [],
+      newComment: ""
     };
   }
   /************************************************************************************************/
   /* FUNCTIONS */
+
+  getComments = () => {};
+
+  addComment = event => {
+    event.preventDefault();
+    const payload = {
+      image_id: this.props.image.id,
+      text: this.state.newComment
+    };
+    let response = add_comment(payload);
+    response.then(value => {
+      console.log(value);
+      let temp_comments = this.state.comments;
+      temp_comments.push(value);
+      this.setState({ comments: temp_comments });
+    });
+  };
+
+  deleteComment = () => {};
 
   /************************************************************************************************/
   render() {
@@ -53,7 +69,7 @@ export class Slide extends Component {
         <Grid container justify="center" alignItems="stretch" spacing={0}>
           {/*Fist element of slide is an image*/}
           <Grid item>
-            <img src={image.url} alt="slide" className={classes.imagePart} />
+            <img src={image.path} alt="slide" className={classes.imagePart} />
           </Grid>
           {/*Second element of slide is a list with comments realated to the image*/}
           <Grid item>
@@ -62,7 +78,7 @@ export class Slide extends Component {
                 <ListItem
                   alignItems="flex-start"
                   className={classes.commentPart}
-                  key={comment.id}
+                  key={comment._id}
                 >
                   <Grid container justify="space-around">
                     <Grid item xs={11}>
@@ -73,7 +89,7 @@ export class Slide extends Component {
                         className={classes.inline}
                         color="textPrimary"
                       >
-                        {comment.author}
+                        {comment.owner}
                       </Typography>
                       {/*Comment's Body */}
                       {"-  "}
@@ -99,15 +115,15 @@ export class Slide extends Component {
                   id="input-with-icon-grid"
                   fullWidth
                   label="Write a comment.."
-                  /*!!!!!!!!!!!!!!!!!!!! function addComment()*/
-                  onChange={() => {}}
+                  onChange={event => {
+                    this.setState({ newComment: event.target.value });
+                  }}
                 />
                 <Button
                   type="submit"
                   variant="text"
                   autoFocus
-                  /*!!!!!!!!!!!!!!!!!!!! function submitComment()*/
-                  onClick={() => {}}
+                  onClick={this.addComment}
                 >
                   <AddCommentIcon />
                 </Button>

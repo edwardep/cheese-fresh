@@ -7,6 +7,7 @@ from ..data.images import Image
 from ..data.comments import Comment
 import requests
 from .. import STORAGE_HOST
+from .. import zk_get_storage_children, zk_app
 
 '''
 # --------------------------------CONTENTS--------------------
@@ -25,24 +26,35 @@ class DeleteImage(Resource):
         me = User.objects(username=current_user).first()
         this_image_id = request.json['image_id']
 
-        # remove from the gallery list
-        for gallery in me.galleries:
-            for image_id in gallery.images:
-                if image_id == this_image_id:
-                    gallery.images.remove(image_id)
-                    me.save()
-
         # remove image Object and file from storage
         image = Image.objects(iid=this_image_id).first()
         if image:
+            active_nodes = zk_get_storage_children(zk_app)
+            storage_1 = ''
+            storage_2 = ''
+            if len(active_nodes) > 0:
+                if zk_app.exists('/storage/'+image.storage[0][1]):
+                    storage_1 = 'http://'+STORAGE_HOST[int(image.storage[0][1])]+':100' + \
+                        image.storage[0][1]
+                if zk_app.exists('/storage/'+image.storage[1][1]):
+                    storage_2 = 'http://'+STORAGE_HOST[int(image.storage[1][1])]+':100' + \
+                        image.storage[1][1]
 
             data = {'filename': image.path}
-            try:
-                requests.delete(STORAGE_HOST[0] + '/delete_image', json=data)
+            if storage_1 != '' or storage_2 != '':
+                requests.delete(storage_1 + '/delete_image', json=data)
+                requests.delete(storage_2 + '/delete_image', json=data)
                 image.delete()
+
+                # remove from the gallery list
+                for gallery in me.galleries:
+                    for image_id in gallery.images:
+                        if image_id == this_image_id:
+                            gallery.images.remove(image_id)
+                            me.save()
                 return make_response(jsonify('OK'), 200)
-            except:
-                return make_response(jsonify('storage_down'), 500)
+            else:
+                return make_response(jsonify('storage_down'), 501)
             
         return make_response(jsonify('BAD'), 404)
 

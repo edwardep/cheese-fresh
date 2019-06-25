@@ -272,7 +272,7 @@ class AddComment(Resource):
         comment._id = comment_id
         image.comments.append(comment)
         image.save()
-        output = "OK"
+        output = comment
 
         return make_response(jsonify(output), 201)
 
