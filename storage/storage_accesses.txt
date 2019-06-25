@@ -1,4 +1,17 @@
 _____________________________________________
+Timestamp: 2019-06-25 20:27:31.485687
+Post requests count: 2
+Post requests count: 1
+Delete requests count: 1
+_____________________________________________
+Timestamp: 2019-06-25 20:25:11.537689
+Post requests count: 2
+Post requests count: 1
+_____________________________________________
+Timestamp: 2019-06-25 20:21:41.041719
+Post requests count: 2
+Post requests count: 1
+_____________________________________________
 Timestamp: 2019-06-25 19:42:31.522107
 Post requests count: 2
 Post requests count: 1
