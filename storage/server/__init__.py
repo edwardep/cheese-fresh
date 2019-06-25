@@ -37,7 +37,8 @@ with open(LOG_FILE, 'r') as file:
     # read a list of lines into data
     data = file.readlines()
 
-data.insert(0, "Timestamp: "+timestamp)
+line = "_____________________________________________\n"
+data.insert(0, line+"Timestamp: "+str(datetime.fromtimestamp(timestamp))+'\n')
 with open(LOG_FILE, 'w') as file:
     file.writelines(data)
 
@@ -54,9 +55,9 @@ def post_image():
     with open(LOG_FILE, 'r') as file:
     # read a list of lines into data
         data = file.readlines()
-    data.insert(1, "Post requests count: "+str(count_post_requests.value)+"\n")
+    data.insert(2, "Post requests count: "+str(count_post_requests.value)+"\n")
     with open(LOG_FILE, 'w') as file:
-        file.writelines( data )
+        file.writelines(data)
 
     file = request.files['file']
     assert os.path.exists(app.config['UPLOAD_FOLDER']) == True 
@@ -77,9 +78,9 @@ def delete_image():
     with open(LOG_FILE, 'r') as file:
     # read a list of lines into data
         data = file.readlines()
-    data.insert(3,"Delete requests count: "+str(count_delete_requests.value)+"\n")
+    data.insert(4,"Delete requests count: "+str(count_delete_requests.value)+"\n")
     with open(LOG_FILE, 'w') as file:
-        file.writelines( data )
+        file.writelines(data)
     
     filename = request.json['filename']
 
@@ -101,9 +102,9 @@ def get_uploads(filename):
     with open(LOG_FILE, 'r') as file:
     # read a list of lines into data
         data = file.readlines()
-    data.insert(2,"Get requests count: "+str(count_get_requests.value)+"\n")
+    data.insert(3, "Get requests count: "+str(count_get_requests.value)+"\n")
     with open(LOG_FILE, 'w') as file:
-        file.writelines( data )
+        file.writelines(data)
     
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 

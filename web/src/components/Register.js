@@ -103,7 +103,6 @@ export class Register extends Component {
 
       response.then(value => {
         if (value) {
-          console.log("true");
           this.props.history.push("/homepage?username=" + payload.username);
         } else {
           this.setState({ alert_open: true });

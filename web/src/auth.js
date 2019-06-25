@@ -15,7 +15,6 @@ class Auth {
       date.setUTCSeconds(decodedToken.payload["exp"]);
 
       if (date.valueOf() < dateNow.valueOf()) {
-        console.log("Token expired");
         isExpired = true;
       }
     }

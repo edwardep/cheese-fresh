@@ -1,0 +1,105 @@
+_____________________________________________
+Timestamp: 2019-06-25 19:34:58.473192
+Post requests count: 2
+Post requests count: 1
+Delete requests count: 1
+_____________________________________________
+Timestamp: 2019-06-25 19:28:40.124738
+Post requests count: 2
+Post requests count: 1
+Delete requests count: 1
+_____________________________________________
+Timestamp: 2019-06-25 18:38:49.171514
+_____________________________________________
+Timestamp: 2019-06-25 18:38:48.809631
+_____________________________________________
+Timestamp: 2019-06-25 18:38:48.537313
+_____________________________________________
+Timestamp: 2019-06-25 18:38:48.142183
+_____________________________________________
+Timestamp: 2019-06-25 18:38:47.812230
+_____________________________________________
+Timestamp: 2019-06-25 18:38:46.878203
+_____________________________________________
+Timestamp: 2019-06-25 18:38:46.376271
+_____________________________________________
+Timestamp: 2019-06-25 18:38:44.919545
+_____________________________________________
+Timestamp: 2019-06-25 18:24:32.786021
+Post requests count: 2
+Post requests count: 1
+Delete requests count: 1
+_____________________________________________
+Timestamp: 2019-06-25 18:22:28.624549
+Post requests count: 2
+Post requests count: 1
+Delete requests count: 1
+_____________________________________________
+Timestamp: 2019-06-25 18:10:26.178625
+Post requests count: 1
+Get requests count: 17
+Get requests count: 16
+Get requests count: 15
+Get requests count: 14
+Get requests count: 4
+Get requests count: 8
+Get requests count: 7
+Get requests count: 6
+Get requests count: 5
+Get requests count: 4
+Get requests count: 3
+Get requests count: 13
+Get requests count: 12
+Get requests count: 11
+Get requests count: 10
+Get requests count: 3
+Get requests count: 14
+Get requests count: 9
+Get requests count: 13
+Get requests count: 12
+Get requests count: 8
+Get requests count: 11
+Get requests count: 7
+Get requests count: 10
+Get requests count: 6
+Get requests count: 9
+Get requests count: 5
+Get requests count: 8
+Get requests count: 4
+Get requests count: 7
+Get requests count: 6
+Post requests count: 5
+Post requests count: 3
+Get requests count: 3
+Get requests count: 5
+Post requests count: 4
+Post requests count: 3
+Get requests count: 2
+Post requests count: 2
+Post requests count: 1
+Get requests count: 2
+Get requests count: 4
+Get requests count: 3
+Post requests count: 2
+Post requests count: 1
+Get requests count: 2
+Post requests count: 1
+_____________________________________________
+Get requests count: 2
+Get requests count: 1
+Get requests count: 1
+Get requests count: 1
+Get requests count: 1
+Timestamp: 2019-06-25 18:10:25.652070
+_____________________________________________
+Timestamp: 2019-06-25 18:10:25.340542
+_____________________________________________
+Timestamp: 2019-06-25 18:10:25.322417
+_____________________________________________
+Timestamp: 2019-06-25 18:10:25.041560
+_____________________________________________
+Timestamp: 2019-06-25 18:10:24.164184
+_____________________________________________
+Timestamp: 2019-06-25 18:10:24.119120
+_____________________________________________
+Timestamp: 2019-06-25 18:10:24.106754

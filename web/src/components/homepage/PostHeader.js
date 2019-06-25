@@ -111,9 +111,7 @@ export class PostHeader extends Component {
         profileImage: value.profile_image
       });
     });
-    response.catch(error => {
-      console.log(error);
-    });
+    response.catch(error => {});
   };
 
   followUser = () => {

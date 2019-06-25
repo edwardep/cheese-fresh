@@ -71,7 +71,6 @@ export class Slide extends Component {
     };
     let response = add_comment(payload);
     response.then(value => {
-      console.log(value);
       let temp_comments = this.state.comments;
       temp_comments.push(value);
       this.setState({ comments: temp_comments });
@@ -80,7 +79,6 @@ export class Slide extends Component {
 
   deleteComment = (id, index) => {
     var payload = { comment_id: id, image_id: this.props.image.id };
-    console.log(payload);
     let response = del_comment(payload);
     response.then(() => {
       const temp_comments = this.state.comments;
