@@ -67,7 +67,8 @@ it("post comment", async () => {
   // setup
   mockAxios.post.mockImplementationOnce(() =>
     Promise.resolve({
-      status: 201
+      status: 201,
+      data: { data: "data" }
     })
   );
 
@@ -76,7 +77,7 @@ it("post comment", async () => {
   let cred = await comment(payload);
 
   // expect
-  expect(cred).toBeTruthy();
+  expect(cred).toBeDefined();
   expect(mockAxios.post).toHaveBeenCalledWith(
     "http://127.0.0.1:4000/comment",
     payload,

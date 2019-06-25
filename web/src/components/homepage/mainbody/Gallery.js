@@ -159,7 +159,11 @@ export class Gallery extends Component {
           open={this.state.open}
           onClose={() => this.setState({ open: false })}
         >
-          <ImageSlider images={this.state.images} index={this.state.slide} />
+          <ImageSlider
+            images={this.state.images}
+            index={this.state.slide}
+            queryUser={this.props.queryUser}
+          />
         </Modal>
       </div>
     );

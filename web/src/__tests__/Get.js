@@ -4,7 +4,8 @@ import {
   public_profile,
   galleries,
   comments,
-  images
+  images,
+  users
 } from "../axios/Get";
 
 it("get logout", async () => {
@@ -155,6 +156,33 @@ it("get images", async () => {
     "http://127.0.0.1:4000/gallery_photos",
     {
       params: query,
+      headers: {
+        Authorization: `Bearer ` + localStorage.getItem("jwt_token"),
+        withCredentials: true
+      }
+    }
+  );
+});
+
+it("get all_users", async () => {
+  // setup
+  mockAxios.get.mockImplementationOnce(() =>
+    Promise.resolve({
+      data: {
+        data: "data"
+      },
+      status: 200
+    })
+  );
+
+  // work
+  let cred = await users();
+
+  // expect
+  expect(cred).toBeDefined();
+  expect(mockAxios.get).toHaveBeenCalledWith(
+    "http://127.0.0.1:4000/get_users",
+    {
       headers: {
         Authorization: `Bearer ` + localStorage.getItem("jwt_token"),
         withCredentials: true

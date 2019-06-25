@@ -25,6 +25,7 @@ services:
     ports:
       - 5000:5000
     environment:
+      - WAIT_HOSTS=zookeeper:2181
       - FLASK_APP=app_logic
       - FLASK_ENV=development
       - ZK_HOST=zookeeper
@@ -46,6 +47,7 @@ services:
     ports:
       - 4000:4000
     environment:
+      - WAIT_HOSTS=zookeeper:2181
       - FLASK_APP=auth
       - ZK_HOST=zookeeper
       - FLASK_ENV=development
@@ -61,6 +63,7 @@ services:
     volumes:
       - './storage:/app'
     environment:
+      - WAIT_HOSTS=zookeeper:2181
       - FLASK_ENV=development
       - FLASK_APP=server
       - ZK_HOST=zookeeper
@@ -77,6 +80,7 @@ services:
     volumes:
       - './storage:/app'
     environment:
+      - WAIT_HOSTS=zookeeper:2181
       - FLASK_ENV=development
       - FLASK_APP=server
       - ZK_HOST=zookeeper
@@ -93,6 +97,7 @@ services:
     volumes:
       - './storage:/app'
     environment:
+      - WAIT_HOSTS=zookeeper:2181
       - FLASK_ENV=development
       - FLASK_APP=server
       - ZK_HOST=zookeeper
@@ -109,6 +114,7 @@ services:
     volumes:
       - './storage:/app'
     environment:
+      - WAIT_HOSTS=zookeeper:2181
       - FLASK_ENV=development
       - FLASK_APP=server
       - ZK_HOST=zookeeper
@@ -138,6 +144,8 @@ services:
     environment:
       - ZOO_SERVER_ID=1
       - ALLOW_ANONYMOUS_LOGIN=yes
+    logging:
+      driver: none
 volumes:
   zookeeper_Data:
     driver: local

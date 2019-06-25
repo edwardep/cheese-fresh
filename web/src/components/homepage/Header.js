@@ -11,19 +11,27 @@ import logo from "../images/fullogo.png";
 import IconButton from "@material-ui/core/IconButton";
 import FaceIcon from "@material-ui/icons/Face";
 import ExitIcon from "@material-ui/icons/ExitToApp";
+import SearchIcon from "@material-ui/icons/Search";
 import Grid from "@material-ui/core/Grid";
 import { logout } from "../../axios/Get";
 import { withRouter } from "react-router-dom";
+import PopupList from "./postheader/PopupList";
 import jwt from "jsonwebtoken";
+import { users } from "../../axios/Get";
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
   root: { backgroundColor: "#990033" },
   imglogo: { width: 200, marginLeft: "80px" },
-  buttons: { marginRight: "80px" }
+  buttons: { marginRight: "80px" },
+  search: { marginTop: 5 }
 });
 /************************************************************************************************/
 export class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { open: false, users: [] };
+  }
   /************************************************************************************************/
   /* FUNCTIONS */
 
@@ -55,6 +63,15 @@ export class Header extends Component {
     window.location.reload();
   };
 
+  getAllUsers = () => {
+    this.setState({ open: true });
+
+    let response = users();
+    response.then(value => {
+      this.setState({ users: value });
+    });
+  };
+
   /************************************************************************************************/
   render() {
     const { classes } = this.props;
@@ -69,6 +86,15 @@ export class Header extends Component {
               </Grid>
               {/*container with account, logout buttons*/}
               <Grid item className={classes.buttons}>
+                <IconButton
+                  className={classes.search}
+                  aria-label="menu"
+                  color="inherit"
+                  onClick={this.getAllUsers}
+                >
+                  <SearchIcon />
+                </IconButton>
+
                 <IconButton
                   aria-label="menu"
                   color="inherit"
@@ -88,6 +114,16 @@ export class Header extends Component {
             </Grid>
           </Toolbar>
         </AppBar>
+
+        {/*Users modal */}
+        <PopupList
+          list={this.state.users}
+          title={"All users: "}
+          open={this.state.open}
+          onClose={() => {
+            this.setState({ open: false });
+          }}
+        />
       </header>
     );
   }

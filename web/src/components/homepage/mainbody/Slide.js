@@ -18,6 +18,7 @@ import PropTypes from "prop-types";
 import { comment as del_comment } from "../../../axios/Delete";
 import { comment as add_comment } from "../../../axios/Post";
 import { comments } from "../../../axios/Get";
+
 /************************************************************************************************/
 /* JSX-STYLE */
 const styles = theme => ({
@@ -41,8 +42,26 @@ export class Slide extends Component {
   }
   /************************************************************************************************/
   /* FUNCTIONS */
+  componentDidUpdate = prevProps => {
+    if (this.props.image.id !== prevProps.image.id) {
+      this.getComments();
+    }
+  };
 
-  getComments = () => {};
+  componentDidMount = () => {
+    this.getComments();
+  };
+
+  getComments = () => {
+    const payload = {
+      image_id: this.props.image.id,
+      username: this.props.queryUser["username"]
+    };
+    let response = comments(payload);
+    response.then(value => {
+      this.setState({ comments: value });
+    });
+  };
 
   addComment = event => {
     event.preventDefault();
@@ -59,7 +78,16 @@ export class Slide extends Component {
     });
   };
 
-  deleteComment = () => {};
+  deleteComment = (id, index) => {
+    var payload = { comment_id: id, image_id: this.props.image.id };
+    console.log(payload);
+    let response = del_comment(payload);
+    response.then(() => {
+      const temp_comments = this.state.comments;
+      temp_comments.splice(index, 1);
+      this.setState({ comments: temp_comments });
+    });
+  };
 
   /************************************************************************************************/
   render() {
@@ -78,7 +106,7 @@ export class Slide extends Component {
                 <ListItem
                   alignItems="flex-start"
                   className={classes.commentPart}
-                  key={comment._id}
+                  key={comment.id}
                 >
                   <Grid container justify="space-around">
                     <Grid item xs={11}>
@@ -98,9 +126,14 @@ export class Slide extends Component {
                     <Grid item xs={1}>
                       {/*Delete comment button */}
                       <IconButton
+                        type="submit"
                         className={classes.deleteComm}
-                        /*!!!!!!!!!!!!!!!!!!!!  function deleteComment()*/
-                        onClick={() => {}}
+                        onClick={() =>
+                          this.deleteComment(
+                            comment.id,
+                            this.state.comments.indexOf(comment)
+                          )
+                        }
                       >
                         <DeleteForeverIcon />
                       </IconButton>

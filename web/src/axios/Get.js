@@ -102,3 +102,19 @@ export async function images(query) {
     });
   return res;
 }
+
+export async function users() {
+  var apiBaseUrl = process.env.REACT_APP_APP + "/get_users";
+  var headers = {
+    headers: {
+      Authorization: `Bearer ` + localStorage.getItem("jwt_token"),
+      withCredentials: true
+    }
+  };
+  let res = {};
+
+  await axios.get(apiBaseUrl, headers).then(function(response) {
+    res = response.data;
+  });
+  return res;
+}

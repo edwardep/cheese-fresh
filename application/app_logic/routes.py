@@ -13,6 +13,7 @@ api.add_resource(post_requests.SampleUsers, '/sample_users')
 
 # ----------------------GET---------------------------------------
 api.add_resource(get_requests.index, '/')
+api.add_resource(get_requests.GetUsers, '/get_users')
 api.add_resource(get_requests.GetPublicProfile, '/public_profile')
 api.add_resource(get_requests.GetGalleries, '/get_galleries')
 api.add_resource(get_requests.GalleryPhotos, '/gallery_photos')

@@ -150,7 +150,7 @@ export class PostHeader extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <Grid container spacing={4}>
+        <Grid container>
           {/*profile picture with edit icon */}
           <Grid item>
             <Avatar

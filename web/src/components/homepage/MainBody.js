@@ -110,7 +110,8 @@ export class MainBody extends Component {
 
     let response = add_gallery(payload);
     response.then(value => {
-      this.setState({ open_cg: false, galleries: value.galleries });
+      this.setState({ open_cg: false, galleries: value.galleries, index: 0 });
+      this.getImages(this.state.index);
     });
   };
 
@@ -118,7 +119,8 @@ export class MainBody extends Component {
     const payload = { gallery_title: this.state.galleries[this.state.index] };
     let response = delete_gallery(payload);
     response.then(value => {
-      this.setState({ galleries: value.galleries });
+      this.setState({ galleries: value.galleries, index: 0 });
+      this.getImages(this.state.index);
     });
   };
 

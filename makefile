@@ -45,13 +45,13 @@ run_test_web:
 	@$(DC) $(TEST_YML) run $(WEB) $(JEST) $(JEST_FLAGS)
 
 run_test_app:
-	@$(DC) $(TEST_YML) run $(APPLICATION) $(PYTEST) $(PYT_FLAGS)
+	@$(DC) $(TEST_YML) run $(APPLICATION) $(PYTEST) $(PYT_FLAGS) --cov='app_logic' tests/
 
 run_test_auth:
-	@$(DC) $(TEST_YML) run $(AUTHENTICATION) $(PYTEST) $(PYT_FLAGS)
+	@$(DC) $(TEST_YML) run $(AUTHENTICATION) $(PYTEST) $(PYT_FLAGS) --cov='auth' tests/
 
 run_test_storage:
-	@$(DC) $(TEST_YML) run $(STORAGE_0) $(PYTEST) $(PYT_FLAGS)
+	@$(DC) $(TEST_YML) run $(STORAGE_0) $(PYTEST) $(PYT_FLAGS) --cov='server' tests/
 
 run_test_all_storages:
 	@$(DC) $(TEST_YML) run $(STORAGE_0) $(PYTEST) $(PYT_FLAGS)

@@ -4,6 +4,7 @@ import os
 from flask_jwt_extended import JWTManager, jwt_required
 from kazoo.client import KazooClient
 from multiprocessing import Value
+from datetime import datetime
 
 count_post_requests = Value('i', 0)
 count_get_requests = Value('i', 0)
@@ -15,18 +16,30 @@ app.config.from_envvar('APP_CONFIG_FILE')
 app.config['STORAGE_ID'] = os.environ.get('STORAGE_ID')
 app.config['UPLOAD_FOLDER'] = "/app/images"#+app.config['STORAGE_PORT']
 app.config['ZK_HOST'] = os.environ.get('ZK_HOST')
+
+LOG_FILE = 'storage_accesses.txt'
+
+
 jwt = JWTManager(app)
 CORS(app)
 
-print(app.config['ZK_HOST'])
-
 client = KazooClient(hosts=app.config['ZK_HOST'])
-#client = KazooClient(hosts='localhost:2181')
+
 client.start()
 client.ensure_path("/storage")
 
 if not client.exists('/storage/'+app.config['STORAGE_ID']):
     client.create('/storage/'+app.config['STORAGE_ID'], b"1000", ephemeral=True)
+
+now = datetime.now()
+timestamp = datetime.timestamp(now)
+with open(LOG_FILE, 'r') as file:
+    # read a list of lines into data
+    data = file.readlines()
+
+data.insert(0, "Timestamp: "+timestamp)
+with open(LOG_FILE, 'w') as file:
+    file.writelines(data)
 
 @app.route('/')
 def index():
@@ -38,11 +51,11 @@ def index():
 def post_image():
     with count_post_requests.get_lock():
         count_post_requests.value += 1
-    with open('Output.txt', 'r') as file:
+    with open(LOG_FILE, 'r') as file:
     # read a list of lines into data
         data = file.readlines()
-    data.insert(0, "Post requests count: "+str(count_post_requests.value)+"\n")
-    with open('Output.txt', 'w') as file:
+    data.insert(1, "Post requests count: "+str(count_post_requests.value)+"\n")
+    with open(LOG_FILE, 'w') as file:
         file.writelines( data )
 
     file = request.files['file']
@@ -61,11 +74,11 @@ def post_image():
 def delete_image():
     with count_delete_requests.get_lock():
         count_delete_requests.value += 1
-    with open('Output.txt', 'r') as file:
+    with open(LOG_FILE, 'r') as file:
     # read a list of lines into data
         data = file.readlines()
-    data.insert(2,"Delete requests count: "+str(count_delete_requests.value)+"\n")
-    with open('Output.txt', 'w') as file:
+    data.insert(3,"Delete requests count: "+str(count_delete_requests.value)+"\n")
+    with open(LOG_FILE, 'w') as file:
         file.writelines( data )
     
     filename = request.json['filename']
@@ -85,11 +98,11 @@ def delete_image():
 def get_uploads(filename):
     with count_get_requests.get_lock():
         count_get_requests.value += 1
-    with open('Output.txt', 'r') as file:
+    with open(LOG_FILE, 'r') as file:
     # read a list of lines into data
         data = file.readlines()
-    data.insert(1,"Get requests count: "+str(count_get_requests.value)+"\n")
-    with open('Output.txt', 'w') as file:
+    data.insert(2,"Get requests count: "+str(count_get_requests.value)+"\n")
+    with open(LOG_FILE, 'w') as file:
         file.writelines( data )
     
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)

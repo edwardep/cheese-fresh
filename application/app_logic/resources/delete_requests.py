@@ -33,12 +33,12 @@ class DeleteImage(Resource):
             storage_1 = ''
             storage_2 = ''
             if len(active_nodes) > 0:
-                if zk_app.exists('/storage/'+image.storage[0][1]):
+                if zk_app.exists('/storage/'+str(image.storage[0][1])):
                     storage_1 = 'http://'+STORAGE_HOST[int(image.storage[0][1])]+':100' + \
-                        image.storage[0][1]
-                if zk_app.exists('/storage/'+image.storage[1][1]):
+                        str(image.storage[0][1])
+                if zk_app.exists('/storage/'+str(image.storage[1][1])):
                     storage_2 = 'http://'+STORAGE_HOST[int(image.storage[1][1])]+':100' + \
-                        image.storage[1][1]
+                        str(image.storage[1][1])
 
             data = {'filename': image.path}
             if storage_1 != '' or storage_2 != '':
@@ -54,7 +54,7 @@ class DeleteImage(Resource):
                             me.save()
                 return make_response(jsonify('OK'), 200)
             else:
-                return make_response(jsonify('storage_down'), 501)
+                return make_response(jsonify('storage_down'), 500)
             
         return make_response(jsonify('BAD'), 404)
 
@@ -70,6 +70,10 @@ class DeleteGallery(Resource):
 
         try:
             gallery = me.galleries.get(title=gallery_title)
+            for image_id in gallery.images:
+                image = Image.objects(iid=image_id).first()
+                if image:
+                    image.delete()
             me.galleries.remove(gallery)
             me.save()
         except:

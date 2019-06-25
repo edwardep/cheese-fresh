@@ -14,6 +14,7 @@ import random
 
 '''
 # ----------------------------------------CONTENTS-----------------------------
+# __________________________GetUsers (/get_users)______________________________
 # __________________________GetPublicProfile (/public_profile)_________________
 # __________________________GetGalleries (/get_galleries)______________________
 # __________________________GalleryPhotos(/gallery_photos)_____________________
@@ -31,6 +32,26 @@ class index(Resource):
 # Users info
 # followers-following lists and num
 # if the user is a friend and if its me
+class GetUsers(Resource):
+    @jwt_required
+    def get(self):
+        current_user = get_jwt_identity()
+        me = User.objects(username=current_user).first()
+        user_list = []
+        for user in User.objects:
+            if user.username != current_user:
+                follow = FollowObj()
+                follow.in_common = False
+                if user.username in me.following:
+                    follow.in_common = True
+
+                follow.username = user.username
+                follow.profile_image = user.profile_image
+                user_list.append(follow)
+            else:
+                continue
+        return make_response(jsonify(user_list), 200)
+
 
 class GetPublicProfile(Resource):
     @jwt_required

@@ -82,7 +82,10 @@ export class ImageSlider extends Component {
             </Grid>
             {/*Carousel's slide*/}
             <Grid item xs={10}>
-              <Slide image={images[this.state.slideIndex]} />
+              <Slide
+                image={images[this.state.slideIndex]}
+                queryUser={this.props.queryUser}
+              />
             </Grid>
             {/*Carousel's right arrow*/}
             <Grid item xs={1} className={classes.rightArrow}>
