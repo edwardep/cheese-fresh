@@ -35,9 +35,9 @@ STORAGE_3 = $(REMOVE_AFTER) storage_server_3
 ##@ Testing
 .PHONY: test_web test_app test_auth test_storage test_all
 test_web:		run_test_web								## run web's tests
-test_app: 		run_test_app stop_services					## run application's tests (37)
-test_auth: 		run_test_auth stop_services					## run authentication's tests (11)
-test_storage: 	run_test_storage stop_services				## run storage's tests (4)
+test_app: 		run_test_app stop_services					## run application's tests
+test_auth: 		run_test_auth stop_services					## run authentication's tests
+test_storage: 	run_test_storage stop_services				## run storage's tests
 test_all:		run_test_web run_test_app run_test_auth run_test_storage stop_services	## run all of the above
 
 
@@ -63,26 +63,33 @@ stop_services:
 	@docker stop cheese-fresh_mongodb_1
 	@docker stop cheese-fresh_zookeeper_1
 
-build_tests: clear_cache				## Build all testing containers
+build_tests: clear_cache		## Build all testing containers
 	@$(DC) $(TEST_YML) build
 
-##@ Run Mode
-dev: clear_cache			## docker-compose up --build
-	$(DC) $(DEV_YML) up --build
+##@ Development Mode
+dev_build: clear_cache			## docker-compose build
+	@$(DC) $(DEV_YML) build
+
+dev_run: 						## docker-compose up
+	@$(DC) $(DEV_YML) up
 
 
+##@ Cleanup
+.PHONY: clear_cache clean_all
+clear_cache:					## rm cache files
+	@echo Removing Cache files...
+	@sudo rm -rf application/.pytest_cache
+	@sudo rm -rf application/app_logic/__pycache__
+	@sudo rm -rf application/tests/__pycache__
+	@sudo rm -rf authentication/.pytest_cache
+	@sudo rm -rf authentication/auth/__pycache__
+	@sudo rm -rf authentication/tests/__pycache__
+	@sudo rm -rf storage/.pytest_cache
+	@sudo rm -rf storage/server/__pycache__
+	@sudo rm -rf storage/tests/__pycache__
 
-
-clear_cache:
-	sudo rm -rf application/.pytest_cache
-	sudo rm -rf application/app_logic/__pycache__
-	sudo rm -rf application/tests/__pycache__
-	sudo rm -rf authentication/.pytest_cache
-	sudo rm -rf authentication/auth/__pycache__
-	sudo rm -rf authentication/tests/__pycache__
-	sudo rm -rf storage/.pytest_cache
-	sudo rm -rf storage/server/__pycache__
-	sudo rm -rf storage/tests/__pycache__
+clean_all:						## rm containers, images & volumes
+	
 
 ##@ Helpers
 .PHONY: help

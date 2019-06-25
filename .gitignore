@@ -7,7 +7,7 @@ __pycache__/
 venv/
 *.pyc
 storage/images/*
-
+.coverage
 run_data/
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 .env
