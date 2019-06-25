@@ -103,7 +103,7 @@ class AddProfilePicture(Resource):
             requests.post(
                 selected_storage_2[0] + selected_storage_2[1] + '/post_image', files=sendFile)
             
-            path = 'http://192.168.1.141:100'+rand_storage[0]+'/'+filename
+            path = 'http://localhost:100'+rand_storage[0]+'/'+filename
             output = {'profile_image': path}
             return make_response(jsonify(output), 201)
         except:
@@ -233,7 +233,7 @@ class AddImage(Resource):
             requests.post(
                 selected_storage_2[0] + selected_storage_2[1] + '/post_image', files=sendFile)
             
-            path = 'http://192.168.1.141:100'+rand_storage[0]+'/'+filename
+            path = 'http://localhost:100'+rand_storage[0]+'/'+filename
             output = {
                 'id': image.iid,
                 'path': path,

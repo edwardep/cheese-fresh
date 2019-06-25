@@ -8,8 +8,8 @@ services:
       - './web:/app'
       - '/app/node_modules'
     environment:
-      - REACT_APP_AUTH=http://192.168.1.141:4000
-      - REACT_APP_APP=http://192.168.1.141:5000
+      - REACT_APP_AUTH=http://localhost:4000
+      - REACT_APP_APP=http://localhost:5000
       - NODE_ENV=development
     ports:
       - 3000:3000
